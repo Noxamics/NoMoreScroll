@@ -21,19 +21,22 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // ── 1. Admin default ──────────────────────────────────
-        // Menggunakan email dari MAIL_FROM (env config)
+        // Menggunakan credentials dari .env (ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_NAME)
         AdminUser::updateOrCreate(
-            ['email' => env('MAIL_FROM_ADDRESS', 'admin@app.local')],
+            ['email' => env('ADMIN_EMAIL', 'admin@app.local')],
             [
-                'name'     => env('MAIL_FROM_NAME', 'Admin'),
-                'email'    => env('MAIL_FROM_ADDRESS', 'admin@app.local'),
-                'password' => Hash::make('admin123'),
+                'name'     => env('ADMIN_NAME', 'Administrator'),
+                'email'    => env('ADMIN_EMAIL', 'admin@app.local'),
+                'password' => Hash::make(env('ADMIN_PASSWORD', 'admin123')),
                 'role'     => 'admin',
             ]
         );
 
-        $adminEmail = env('MAIL_FROM_ADDRESS', 'admin@app.local');
-        $this->command->info("Admin user created: $adminEmail / admin123");
+        $adminEmail = env('ADMIN_EMAIL', 'admin@app.local');
+        $adminPassword = env('ADMIN_PASSWORD', 'admin123');
+        $this->command->info("✓ Admin berhasil dibuat:");
+        $this->command->info("  Email: $adminEmail");
+        $this->command->info("  Password: $adminPassword");
 
         // ── 2. Demo user ──────────────────────────────────────
         $demo = User::updateOrCreate(
@@ -49,7 +52,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $this->command->info('Demo user created: demo@digitalliving.app / demo1234');
+        $this->command->info('✓ Demo user created: demo@digitalliving.app / demo1234');
 
         // ── 3. Dummy surveys + ML results (7 hari) ──────────────
         $focusValues = [55, 60, 58, 72, 68, 75, 70];
