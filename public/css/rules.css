@@ -1,0 +1,197 @@
+/* =============================================================
+   public/css/rules.css
+   Activa Admin — Rule Recommendation page styles
+   NOTE: var(--*) references are intentional CSS custom properties
+         defined in the global stylesheet. VS Code CSS validator
+         false-positives on these — they are valid CSS.
+   ============================================================= */
+
+/* ── Stats row ─────────────────────────────────────────────── */
+.rules-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.rules-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.rules-stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  font-size: 18px;
+  background: var(--teal-lt);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.rules-stat-label {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.rules-stat-val {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.rules-stat-val--navy { color: var(--navy); }
+.rules-stat-val--teal { color: var(--teal); }
+
+/* ── Rule card ─────────────────────────────────────────────── */
+.rule-card {
+  position: relative;
+  padding: 20px;
+  margin-bottom: 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  transition: box-shadow .2s;
+}
+
+.rule-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.rule-card.rule-on {
+  border-left: 4px solid var(--teal);
+}
+
+.rule-card.rule-off {
+  opacity: .55;
+  border-left: 4px solid var(--border2);
+}
+
+/* ── Rule card — head ──────────────────────────────────────── */
+.rule-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.rule-id {
+  min-width: 28px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.rule-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+/* ── Rule card — body (IF → THEN) ──────────────────────────── */
+.rule-body {
+  display: grid;
+  grid-template-columns: 1fr 32px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.rule-side {
+  padding: 12px 14px;
+  background: var(--ice);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.rs-lbl {
+  margin-bottom: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.rs-lbl--if   { color: var(--amber); }
+.rs-lbl--then { color: var(--teal);  }
+
+.rs-cond {
+  font-size: 13px;
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.rs-then {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.rule-arr {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+  text-align: center;
+}
+
+/* ── Rule card — footer ────────────────────────────────────── */
+.rule-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rule-meta {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.rule-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* ── Empty state ───────────────────────────────────────────── */
+.rules-empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--text3);
+}
+
+/* ── Modal overrides for rules ─────────────────────────────── */
+.modal-box--md {
+  max-width: 520px;
+}
+
+.modal-footer-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.modal-footer-btns .btn {
+  flex: 1;
+}
+
+/* ── Form helpers ──────────────────────────────────────────── */
+.inp--center  { text-align: center; }
+.inp--textarea { width: 100%; min-height: 90px; resize: vertical; }
+
+/* ── Utility colour helpers ────────────────────────────────── */
+.text-amber { color: var(--amber); }
+.text-teal  { color: var(--teal);  }
+.mb-4       { margin-bottom: 16px; }
+.mb-5       { margin-bottom: 20px; }
+.mr-2       { margin-right: 6px;   }
+.text-sm    { font-size: 12px;     }
