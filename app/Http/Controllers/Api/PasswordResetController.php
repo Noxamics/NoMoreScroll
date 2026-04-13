@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 /**
  * PasswordResetController
@@ -66,11 +67,16 @@ class PasswordResetController extends Controller
                 'message' => 'Kode OTP telah dikirim ke email Anda (berlaku 10 menit)',
             ]);
         } catch (\Exception $e) {
-            // Untuk development: tampilkan error message
-            // Untuk production: gunakan log dan return generic message
+            // Log error untuk debugging
+            Log::error('Failed to send OTP email', [
+                'email' => $request->email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengirim OTP: ' . $e->getMessage(),
+                'message' => 'Gagal mengirim OTP. ' . ($e->getMessage() ?: 'Silakan cek konfigurasi email'),
             ], 500);
         }
     }

@@ -21,17 +21,19 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // ── 1. Admin default ──────────────────────────────────
+        // Menggunakan email dari MAIL_FROM (env config)
         AdminUser::updateOrCreate(
-            ['email' => 'admin@digitalliving.app'],
+            ['email' => env('MAIL_FROM_ADDRESS', 'admin@app.local')],
             [
-                'name'     => 'Super Admin',
-                'email'    => 'admin@digitalliving.app',
+                'name'     => env('MAIL_FROM_NAME', 'Admin'),
+                'email'    => env('MAIL_FROM_ADDRESS', 'admin@app.local'),
                 'password' => Hash::make('admin123'),
                 'role'     => 'admin',
             ]
         );
 
-        $this->command->info('Admin user created: admin@digitalliving.app / admin123');
+        $adminEmail = env('MAIL_FROM_ADDRESS', 'admin@app.local');
+        $this->command->info("Admin user created: $adminEmail / admin123");
 
         // ── 2. Demo user ──────────────────────────────────────
         $demo = User::updateOrCreate(

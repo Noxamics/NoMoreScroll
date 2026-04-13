@@ -8,8 +8,18 @@ use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\KuesionerController;
 use App\Http\Controllers\Admin\RuleController;
 
-Route::get('/admin/dashboard', fn() => view('admin.dashboard'));
-Route::get('/admin/users', fn() => view('admin.users'));
-Route::get('/admin/monitoring', fn() => view('admin.monitoring'));
-Route::get('/admin/kuesioner', fn() => view('admin.kuesioner'));
-Route::get('/admin/rules', fn() => view('admin.rules'));
+// ════════════════════════════════════════════════════
+// Admin Authentication Routes (PUBLIC)
+// ════════════════════════════════════════════════════
+Route::get('/admin/login', [AuthController::class, 'showLogin'])->name('admin.login');
+
+// ════════════════════════════════════════════════════
+// Admin Dashboard Routes (PROTECTED - JWT)
+// ════════════════════════════════════════════════════
+Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users');
+    Route::get('/monitoring', [MonitoringController::class, 'index'])->name('admin.monitoring');
+    Route::get('/kuesioner', [KuesionerController::class, 'index'])->name('admin.kuesioner');
+    Route::get('/rules', [RuleController::class, 'index'])->name('admin.rules');
+});

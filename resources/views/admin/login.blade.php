@@ -239,13 +239,21 @@
       <div class="panel show" id="p-email">
         <div class="p-title">Masuk ke Activa</div>
         <div class="p-sub">
-          Masukkan email admin kamu. Kode OTP akan dikirim ke email tersebut — tidak perlu password.
+          Masukkan email & password admin kamu. Kode OTP akan dikirim ke email tersebut.
         </div>
         <div class="field">
           <label>Email Admin</label>
           <input type="email"
                  id="inp-email"
                  placeholder="admin@activa.id"
+                 autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password"
+                 id="inp-password"
+                 placeholder="••••••••"
+                 autocomplete="current-password"
                  onkeydown="if(event.key==='Enter') kirimOTP()">
         </div>
         <button class="btn-cta btn-navy-cta" id="btn-kirim" onclick="kirimOTP()">
@@ -292,7 +300,7 @@
             Selamat datang kembali, Admin.<br>
             Kamu akan diarahkan ke dashboard Activa.
           </div>
-          <a href="{{ route('admin.dashboard') }}" class="btn-cta btn-teal-cta" style="text-decoration:none">
+          <a href="/admin/dashboard" class="btn-cta btn-teal-cta" style="text-decoration:none">
             Masuk ke Dashboard →
           </a>
         </div>
@@ -309,10 +317,18 @@ let sisa = 299, interval = null;
 // ── Kirim OTP ke API ──
 function kirimOTP() {
   const email = document.getElementById('inp-email').value.trim();
+  const password = document.getElementById('inp-password').value.trim();
+  
   if (!email || !email.includes('@')) {
     tampilError('Masukkan email yang valid ya.');
     return;
   }
+  
+  if (!password || password.length < 6) {
+    tampilError('Masukkan password dengan benar.');
+    return;
+  }
+  
   sembunyiError();
 
   const btn  = document.getElementById('btn-kirim');
@@ -320,21 +336,22 @@ function kirimOTP() {
   btn.classList.add('loading');
   text.textContent = 'Mengirim...';
 
-  // Kirim request ke controller Laravel
-  fetch('{{ route("admin.send-otp") }}', {
+  // Kirim request ke API endpoint
+  fetch('/api/admin/request-otp', {
     method:  'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
     },
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, password }),
   })
   .then(res => res.json())
   .then(data => {
     btn.classList.remove('loading');
     text.textContent = 'Kirim Kode OTP';
-    if (data.message && !data.error) {
+    if (data.success) {
       document.getElementById('email-show').textContent = email;
+      window.adminEmail = email; // Simpan untuk step berikutnya
       goPanel('otp');
       mulaiTimer();
       document.querySelector('.otp-box').focus();
@@ -366,23 +383,28 @@ function verifyOTP() {
   btn.classList.add('loading');
   text.textContent = 'Memverifikasi...';
 
-  fetch('{{ route("admin.verify-otp") }}', {
+  fetch('/api/admin/verify-otp', {
     method:  'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
     },
-    body: JSON.stringify({ email, otp }),
+    body: JSON.stringify({ email, otp_code: otp }),
   })
   .then(res => res.json())
   .then(data => {
     btn.classList.remove('loading');
     text.textContent = 'Verifikasi & Masuk';
-    if (data.redirect) {
+    if (data.success && data.data && data.data.token) {
       clearInterval(interval);
       goPanel('success');
+      
+      // Simpan token ke localStorage
+      localStorage.setItem('admin_token', data.data.token);
+      localStorage.setItem('admin_token_type', data.data.token_type || 'bearer');
+      
       // Redirect ke dashboard setelah 1.5 detik
-      setTimeout(() => window.location.href = data.redirect, 1500);
+      setTimeout(() => window.location.href = '/admin/dashboard', 1500);
     } else {
       tampilError(data.message ?? 'OTP salah atau sudah expired.');
     }
