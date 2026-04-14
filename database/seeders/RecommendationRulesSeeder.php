@@ -134,7 +134,6 @@ class RecommendationRulesSeeder extends Seeder
             ],
         ];
 
-        // Tambahkan timestamps ke semua rules
         $rules = array_map(fn ($r) => array_merge($r, [
             'created_by' => null,
             'created_at' => $now,
