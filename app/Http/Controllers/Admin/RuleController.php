@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Recommendation;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RuleController extends Controller
 {
-    /**
-     * Show rules management page
-     */
     public function index()
     {
-        $rules = Recommendation::all();
+        // Ambil langsung dari collection MongoDB — tidak pakai model Recommendation
+        $rules = collect(
+            DB::connection('mongodb')
+                ->collection('recommendation_rules')
+                ->get()
+        );
+
         return view('admin.rules', compact('rules'));
     }
 }

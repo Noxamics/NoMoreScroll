@@ -44,20 +44,23 @@ class Kernel extends HttpKernel
      * The application's route middleware.
      */
     protected $routeMiddleware = [
-        'auth'                => \App\Http\Middleware\Authenticate::class,
-        'auth.basic'          => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'auth.session'        => \Illuminate\Session\Middleware\AuthenticateSession::class,
-        'cache.headers'       => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can'                 => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest'               => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'password.confirm'    => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'precognitive'        => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
-        'signed'              => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle'            => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified'            => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
+        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'admin.only' => \App\Http\Middleware\AdminOnlyMiddleware::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
         // ─── JWT Middleware ───────────────────────────────────────
-        'jwt.auth'            => \App\Http\Middleware\JwtMiddleware::class,
-        'jwt.admin'           => \App\Http\Middleware\JwtAdminMiddleware::class,
+        'jwt.auth' => \App\Http\Middleware\JwtMiddleware::class,
+        'jwt.admin' => \App\Http\Middleware\JwtAdminMiddleware::class,
     ];
+
+
 }
