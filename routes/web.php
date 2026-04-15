@@ -25,6 +25,7 @@ Route::post('/admin/verify-otp', [AdminOtpController::class, 'verifyOtp'])->name
 Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/users', [UserController::class, 'index'])->name('admin.users');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
     Route::get('/monitoring', [MonitoringController::class, 'index'])->name('admin.monitoring');
     Route::get('/kuesioner', [KuesionerController::class, 'index'])->name('admin.kuesioner');
     
