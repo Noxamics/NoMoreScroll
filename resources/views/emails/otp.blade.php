@@ -110,12 +110,12 @@
 
             <div class="signature">
                 <p>Salam hormat,</p>
-                <p><strong>Tim NoMoreScroll</strong></p>
+                <p><strong>Tim Activa</strong></p>
             </div>
         </div>
 
         <div class="footer">
-            <p>&copy; {{ date('Y') }} NoMoreScroll. Hak cipta dilindungi.</p>
+            <p>&copy; {{ date('Y') }} Activa. Hak cipta dilindungi.</p>
             <p>Email ini dikirim karena ada permintaan reset password di akun Anda.</p>
         </div>
     </div>
