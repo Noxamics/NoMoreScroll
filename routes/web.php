@@ -27,5 +27,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('admin.users');
     Route::get('/monitoring', [MonitoringController::class, 'index'])->name('admin.monitoring');
     Route::get('/kuesioner', [KuesionerController::class, 'index'])->name('admin.kuesioner');
+    
+    // Rules endpoints
     Route::get('/rules', [RuleController::class, 'index'])->name('admin.rules');
+    Route::post('/rules', [RuleController::class, 'store'])->name('admin.rules.store');
+    Route::patch('/rules/{id}/toggle', [RuleController::class, 'toggle'])->name('admin.rules.toggle');
+    Route::delete('/rules/{id}', [RuleController::class, 'destroy'])->name('admin.rules.destroy');
 });

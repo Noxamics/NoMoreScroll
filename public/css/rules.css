@@ -195,3 +195,30 @@
 .mb-5       { margin-bottom: 20px; }
 .mr-2       { margin-right: 6px;   }
 .text-sm    { font-size: 12px;     }
+
+/* ── Priority pills ────────────────────────────────────────── */
+.pill {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pill-navy   { background: rgba(30, 58, 95, 0.1);     color: var(--navy); }
+.pill-red    { background: rgba(224, 82, 82, 0.1);    color: var(--red); }
+.pill-amber  { background: rgba(217, 119, 6, 0.1);    color: var(--amber); }
+.pill-teal   { background: rgba(13, 148, 136, 0.1);   color: var(--teal); }
+
+/* ── Danger button override ────────────────────────────────── */
+.btn-danger {
+  background: var(--red);
+  color: white;
+  box-shadow: 0 3px 10px rgba(224, 82, 82, 0.28);
+}
+
+.btn-danger:hover {
+  background: #c73d3d;
+  transform: translateY(-1px);
+}
