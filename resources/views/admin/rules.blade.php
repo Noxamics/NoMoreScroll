@@ -94,10 +94,16 @@
   <div class="rule-foot">
     <div class="rule-meta">Diterapkan ke <strong>{{ number_format($rule->applied_count ?? 0) }}</strong> user</div>
     <div class="rule-actions">
-      {{-- FIX: pindahkan json_encode ke data-rule attribute, hindari JS false-positive VS Code --}}
+      {{-- Gunakan individual data attributes untuk avoid JSON parsing issues --}}
       <button class="btn btn-ghost btn-sm"
-              data-rule="{{ htmlspecialchars(json_encode($rule), ENT_QUOTES, 'UTF-8') }}"
-              onclick="openEdit(JSON.parse(this.dataset.rule))">✏ Edit</button>
+              data-id="{{ $rule->_id }}"
+              data-name="{{ $rule->name }}"
+              data-variable="{{ $rule->variable }}"
+              data-operator="{{ $rule->operator }}"
+              data-value="{{ $rule->value }}"
+              data-recommendation="{{ $rule->recommendation }}"
+              data-priority="{{ $rule->priority }}"
+              onclick="openEdit(this)">✏ Edit</button>
       <form method="POST" action="{{ route('admin.rules.destroy', $rule->_id) }}"
             onsubmit="return confirm('Hapus rule ini?')">
         @csrf @method('DELETE')

@@ -16,7 +16,20 @@ function openAdd() {
   showModal();
 }
 
-function openEdit(rule) {
+function openEdit(button) {
+  // Extract rule data dari button attributes
+  const rule = {
+    _id: button.dataset.id,
+    name: button.dataset.name,
+    variable: button.dataset.variable,
+    operator: button.dataset.operator,
+    value: button.dataset.value,
+    recommendation: button.dataset.recommendation,
+    priority: button.dataset.priority,
+  };
+
+  console.log('📝 Edit rule:', rule);
+
   // Set form untuk edit
   document.getElementById('m-title').textContent = 'Edit Rule';
   document.getElementById('m-method').value = 'PATCH';
@@ -35,13 +48,17 @@ function openEdit(rule) {
 }
 
 function showModal() {
-  document.getElementById('modal').style.display = 'flex';
+  const modal = document.getElementById('modal');
+  modal.classList.add('modal-show');
   document.body.style.overflow = 'hidden';
+  console.log('✅ Modal ditampilkan');
 }
 
 function closeModal() {
-  document.getElementById('modal').style.display = 'none';
+  const modal = document.getElementById('modal');
+  modal.classList.remove('modal-show');
   document.body.style.overflow = 'auto';
+  console.log('✅ Modal ditutup');
 }
 
 // Tutup modal saat tekan Escape
