@@ -126,10 +126,18 @@
           <td><span class="pill {{ $riskClass }}">{{ $riskLabel }}</span></td>
           <td>
             <div class="tbl-actions">
-              {{-- FIX: pindahkan json_encode ke data-user attribute, hindari JS false-positive VS Code --}}
+              {{-- Gunakan individual data attributes untuk avoid JSON parsing issues --}}
               <button class="btn btn-ghost btn-sm"
-                      data-user="{{ htmlspecialchars(json_encode($user), ENT_QUOTES, 'UTF-8') }}"
-                      onclick="openModal(JSON.parse(this.dataset.user))">Detail</button>
+                      data-id="{{ $user['id'] }}"
+                      data-name="{{ $user['name'] }}"
+                      data-email="{{ $user['email'] }}"
+                      data-focus="{{ $user['focus_score'] ?? 0 }}"
+                      data-screen="{{ $user['screen_time'] ?? 0 }}"
+                      data-productivity="{{ $user['productivity'] ?? 0 }}"
+                      data-dependency="{{ $user['digital_dependency'] ?? 0 }}"
+                      data-risk="{{ $user['risk'] ?? 'low' }}"
+                      data-joined="{{ $user['created_at'] ?? '' }}"
+                      onclick="openModal(this)">Detail</button>
               <form method="POST"
                 action="{{ route('admin.users.destroy', $user['id']) }}"
                 data-name="{{ htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8') }}"

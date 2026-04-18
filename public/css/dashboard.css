@@ -80,11 +80,73 @@
 .user-name  { font-weight: 600; font-size: 13px; }
 .user-email { font-size: 11px; color: var(--text3); }
 
+/* User cell */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-cell__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.user-cell__email {
+  font-size: 11px;
+  color: var(--text3);
+}
+
 /* Focus score */
 .focus-score  { font-weight: 700; }
 .focus-high   { color: var(--teal); }
 .focus-medium { color: var(--amber); }
 .focus-low    { color: var(--red); }
+
+/* Score bar */
+.score-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-row__score {
+  font-weight: 700;
+  font-size: 13px;
+  min-width: 30px;
+}
+
+.score-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  flex: 1;
+  min-width: 80px;
+}
+
+.score-bar__fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.score-bar__fill--teal { background: var(--teal); }
+.score-bar__fill--amber { background: var(--amber); }
+.score-bar__fill--red { background: var(--red); }
+
+/* Table actions */
+.tbl-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Cell styles */
+.cell--muted { color: var(--text3); }
+.cell--sm { font-size: 12px; }
+.cell--body { font-size: 13px; color: var(--text); }
 
 /* Empty state */
 .td-empty {
@@ -118,4 +180,314 @@
 }
 
 .activity-text { font-size: 13px; font-weight: 500; }
-.activity-time { font-size: 11px; color: var(--text3); }    
+.activity-time { font-size: 11px; color: var(--text3); }
+
+/* ═══════════════════════════════════════════════════════════════
+   ── MODAL PROFESIONAL
+   ═══════════════════════════════════════════════════════════════ */
+
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(15, 31, 53, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 9999 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease !important;
+  backdrop-filter: blur(2px) !important;
+  pointer-events: none !important;
+}
+
+.modal-overlay.modal-show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.modal-box {
+  background: var(--white) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: 0 20px 60px rgba(30, 58, 95, 0.15), 
+              0 0 1px rgba(30, 58, 95, 0.1) !important;
+  max-width: 500px !important;
+  width: 90% !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  animation: slideUp 0.3s ease !important;
+  position: relative !important;
+  z-index: 10000 !important;
+}
+
+/* Modal size variants */
+.modal-box--md {
+  max-width: 600px !important;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Modal header ──────────────────────────────────────────────── */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.modal-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text3);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: var(--ice);
+  color: var(--navy);
+}
+
+/* ── User info section ────────────────────────────────────────── */
+.user-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.05), rgba(30, 58, 95, 0.03));
+  border-bottom: 1px solid var(--border);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.avatar--teal { background: var(--teal); }
+.avatar--lg {
+  width: 56px;
+  height: 56px;
+  font-size: 20px;
+}
+
+.user-modal-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.user-modal-email {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+
+.user-modal-joined {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+/* ── Metrics grid ──────────────────────────────────────────────── */
+.modal-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 24px;
+  background: var(--ice);
+}
+
+.modal-metric {
+  padding: 16px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.modal-metric:hover {
+  box-shadow: var(--shadow);
+  border-color: rgba(13, 148, 136, 0.3);
+}
+
+.modal-metric__label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 8px;
+}
+
+.modal-metric__val {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.modal-metric__val--teal { color: var(--teal); }
+.modal-metric__val--amber { color: var(--amber); }
+.modal-metric__val--navy { color: var(--navy); }
+.modal-metric__val--violet { color: var(--violet); }
+
+.modal-metric__unit {
+  font-size: 10px;
+  color: var(--text3);
+}
+
+/* ── Risk level row ────────────────────────────────────────────── */
+.modal-risk-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-risk-row__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.pill-teal {
+  background: var(--teal-lt);
+  color: var(--teal);
+  border: 1px solid rgba(13, 148, 136, 0.2);
+}
+
+.pill-amber {
+  background: var(--amber-lt);
+  color: var(--amber);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+.pill-red {
+  background: var(--red-lt);
+  color: var(--red);
+  border: 1px solid rgba(224, 82, 82, 0.2);
+}
+
+/* ── Modal footer buttons ──────────────────────────────────────── */
+.modal-footer-btns {
+  display: flex;
+  gap: 10px;
+  padding: 24px;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* ── Button styles (reuse dari app.blade.php) ────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--sans);
+  text-decoration: none;
+}
+
+.btn-ghost {
+  background: var(--ice);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.btn-ghost:hover {
+  background: var(--border);
+  box-shadow: var(--shadow);
+}
+
+.btn-danger {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+}
+
+.btn-danger:hover {
+  background: #D03E3E;
+  box-shadow: 0 4px 12px rgba(224, 82, 82, 0.3);
+}
+
+.btn-sm {
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
+/* Responsive modal */
+@media (max-width: 600px) {
+  .modal-box {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .modal-metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-footer-btns {
+    flex-direction: column;
+  }
+
+  .modal-footer-btns .btn {
+    width: 100%;
+  }
+}    
