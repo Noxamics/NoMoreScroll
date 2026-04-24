@@ -31,4 +31,8 @@ return [
 
     'supports_credentials' => false,
 
+
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    'allow_credentials' => true,
+
 ];
