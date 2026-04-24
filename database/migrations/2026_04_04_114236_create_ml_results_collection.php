@@ -14,25 +14,20 @@ use Illuminate\Support\Facades\Schema;
  *   recommendations: [ "...", "..." ],   ← embedded, bukan relasi terpisah
  *   created_at, updated_at
  */
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::connection('mongodb')->create('ml_results', function (Blueprint $collection) {
             $collection->string('user_id')->index();
             $collection->string('questionnaire_id')->index();
 
-            $collection->float('focus_score');
-            $collection->float('productivity_score');
             $collection->float('digital_dependence_score');
 
-            $collection->boolean('high_risk_flag')->default(false);
+            // Embedded array of string
+            // Contoh: ["Kurangi waktu di media sosial", "Tidur minimal 7 jam"]
+            $collection->array('recommendations');
 
-            // Array of string — embedded recommendations
-            // Contoh: ["Kurangi social media", "Tidur 7 jam"]
-            // Di MongoDB ini otomatis tersimpan sebagai array
-
-            $collection->timestamps(); // created_at + updated_at
+            $collection->timestamps();
         });
     }
 

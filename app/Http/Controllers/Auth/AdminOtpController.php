@@ -199,7 +199,7 @@ class AdminOtpController extends Controller
         <body style="margin:0;padding:20px;background:#F0F9FF;font-family:'Segoe UI',sans-serif;">
           <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(30,58,95,.10);">
             <div style="background:#1E3A5F;padding:32px;text-align:center;">
-              <div style="font-size:22px;font-weight:700;color:#fff;">⚡ Activa Admin</div>
+              <div style="font-size:22px;font-weight:700;color:#fff;">Activa Admin</div>
               <div style="font-size:13px;color:rgba(255,255,255,.6);margin-top:6px;">Kode OTP Login Aman</div>
             </div>
             <div style="padding:32px;">
@@ -214,7 +214,7 @@ class AdminOtpController extends Controller
                 <div style="font-size:12px;color:#4A6180;margin-top:10px;">Berlaku selama <strong>5 menit</strong></div>
               </div>
               <div style="background:#FFF8EC;border-left:4px solid #F59E0B;border-radius:6px;padding:14px 16px;font-size:13px;color:#92400E;margin:20px 0;">
-                ⚠️ Jangan bagikan kode ini ke siapa pun. Tim Activa tidak akan pernah memintanya.
+                Jangan bagikan kode ini ke siapa pun. Tim Activa tidak akan pernah memintanya.
               </div>
               <p style="color:#4A6180;font-size:13px;">Jika kamu tidak mencoba login, abaikan email ini.</p>
             </div>

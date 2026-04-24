@@ -10,6 +10,7 @@ Halaman Verifikasi OTP — Activa Admin
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('../images/NewLogoEmblem2.svg') }}">
     <title>Verifikasi OTP — Activa Admin</title>
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap"
@@ -73,8 +74,9 @@ Halaman Verifikasi OTP — Activa Admin
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 40px;
+            justify-content: flex-start;
+            gap: 10px;
+            padding: 20px 40px 40px 40px;
             position: relative;
             overflow: hidden;
         }
@@ -86,9 +88,8 @@ Halaman Verifikasi OTP — Activa Admin
             right: -80px;
             width: 300px;
             height: 300px;
-            background: rgba(13, 148, 136, 0.12);
+            background: rgba(13, 148, 136, .12);
             border-radius: 50%;
-            pointer-events: none;
         }
 
         .left::after {
@@ -98,9 +99,15 @@ Halaman Verifikasi OTP — Activa Admin
             left: -60px;
             width: 200px;
             height: 200px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, .04);
             border-radius: 50%;
-            pointer-events: none;
+        }
+
+        .logo-img {
+            width: 160px;
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 90px;
         }
 
         .brand {
@@ -111,40 +118,17 @@ Halaman Verifikasi OTP — Activa Admin
             z-index: 1;
         }
 
-        .brand-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--teal);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 16px rgba(13, 148, 136, 0.4);
-        }
-
-        .brand-name {
-            font-family: var(--serif);
-            font-size: 24px;
-            color: #fff;
-        }
-
-        .brand-name em {
-            color: #5EEAD4;
-            font-style: italic;
-        }
-
         .brand-tag {
             font-size: 10px;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, .4);
             letter-spacing: .1em;
             text-transform: uppercase;
-            margin-top: 1px;
         }
 
         .left-body {
             position: relative;
             z-index: 1;
+            gap: 30px;
         }
 
         .left-headline {
@@ -163,79 +147,45 @@ Halaman Verifikasi OTP — Activa Admin
 
         .left-desc {
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, .6);
             line-height: 1.8;
             margin-bottom: 28px;
         }
 
-        .steps {
+        .feat-list {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 11px;
         }
 
-        .step-item {
+        .feat-item {
             display: flex;
-            align-items: flex-start;
-            gap: 12px;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, .7);
         }
 
-        .step-num {
-            width: 24px;
-            height: 24px;
+        .feat-dot {
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            flex-shrink: 0;
+            background: rgba(13, 148, 136, .25);
+            border: 1px solid rgba(13, 148, 136, .35);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 11px;
-            font-weight: 700;
-        }
-
-        .step-num.done {
-            background: var(--teal);
-            color: #fff;
-        }
-
-        .step-num.active {
-            background: rgba(13, 148, 136, 0.25);
-            border: 1.5px solid var(--teal);
             color: #5EEAD4;
-        }
-
-        .step-num.idle {
-            background: rgba(255, 255, 255, 0.07);
-            border: 1.5px solid rgba(255, 255, 255, 0.15);
-            color: rgba(255, 255, 255, 0.35);
-        }
-
-        .step-info {
-            padding-top: 2px;
-        }
-
-        .step-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #fff;
-            line-height: 1.3;
-        }
-
-        .step-label.idle {
-            color: rgba(255, 255, 255, 0.35);
-            font-weight: 400;
-        }
-
-        .step-sub {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 2px;
+            flex-shrink: 0;
         }
 
         .left-foot {
             font-size: 11px;
-            color: rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, .25);
             letter-spacing: .05em;
             position: relative;
+            margin-top: 230px;
             z-index: 1;
         }
 
@@ -603,51 +553,27 @@ Halaman Verifikasi OTP — Activa Admin
 
     <div class="split">
 
-        {{-- ── LEFT PANEL ── --}}
+        {{-- ── LEFT BRAND PANEL ── --}}
         <div class="left">
             <div class="brand">
-                <div class="brand-icon">⚡</div>
-                <div>
-                    <div class="brand-name">Acti<em>va</em></div>
-                    <div class="brand-tag">Admin Control Panel</div>
+                <div class="brand-icon">
+                    <img src="../images/NewLogoPutih.svg" alt="Logo" class="logo-img">
                 </div>
             </div>
 
             <div class="left-body">
                 <div class="left-headline">
-                    Satu langkah lagi<br>
-                    untuk <em>masuk</em>.
+                    Monitor &amp; kelola<br>
+                    <em>digital wellness</em><br>
+                    dengan mudah.
                 </div>
                 <div class="left-desc">
-                    Kode OTP sudah dikirim ke email kamu. Masukkan 6 digit kode untuk memverifikasi identitas.
-                </div>
-
-                {{-- Step indicator --}}
-                <div class="steps">
-                    <div class="step-item">
-                        <div class="step-num done">✓</div>
-                        <div class="step-info">
-                            <div class="step-label">Masukkan email</div>
-                            <div class="step-sub">Email admin terverifikasi</div>
-                        </div>
-                    </div>
-                    <div class="step-item">
-                        <div class="step-num active">2</div>
-                        <div class="step-info">
-                            <div class="step-label">Verifikasi OTP</div>
-                            <div class="step-sub">Masukkan kode 6 digit dari email</div>
-                        </div>
-                    </div>
-                    <div class="step-item">
-                        <div class="step-num idle">3</div>
-                        <div class="step-info">
-                            <div class="step-label idle">Masuk ke dashboard</div>
-                        </div>
-                    </div>
+                    Dashboard terpusat untuk memantau hasil ML, mengelola pengguna,
+                    dan mengatur rekomendasi berbasis aturan.
                 </div>
             </div>
 
-            <div class="left-foot">ACTIVA · SISTEM MONITORING DIGITAL WELLNESS</div>
+            <div class="left-foot">ACTIVA · MEASURE. IMPROVE. THRIVE.</div>
         </div>
 
         {{-- ── RIGHT CARD ── --}}
@@ -657,7 +583,13 @@ Halaman Verifikasi OTP — Activa Admin
                 {{-- Success: OTP terkirim --}}
                 @if (session('success') === 'otp_sent')
                     <div class="alert alert-success">
-                        <span class="alert-icon">✅</span>
+                        <span class="alert-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                <polyline points="22 4 12 14.01 9 11.01" />
+                            </svg>
+                        </span>
                         <div><strong>Kode OTP berhasil dikirim!</strong> Cek inbox atau folder spam email kamu.</div>
                     </div>
                 @endif
@@ -666,7 +598,14 @@ Halaman Verifikasi OTP — Activa Admin
                 @if (session('error'))
                     @php $err = session('error'); @endphp
                     <div class="alert alert-error">
-                        <span class="alert-icon">❌</span>
+                        <span class="alert-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="15" y1="9" x2="9" y2="15" />
+                                <line x1="9" y1="9" x2="15" y2="15" />
+                            </svg>
+                        </span>
                         <div>
                             @if ($err === 'invalid_otp') <strong>Kode OTP salah.</strong> Silakan coba lagi.
                             @elseif ($err === 'expired') <strong>Kode OTP sudah kedaluwarsa.</strong> Minta kode baru.
@@ -679,13 +618,23 @@ Halaman Verifikasi OTP — Activa Admin
 
                 @if ($errors->any())
                     <div class="alert alert-error">
-                        <span class="alert-icon">⚠️</span>
+                        <span class="alert-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                <line x1="12" y1="9" x2="12" y2="13" />
+                                <line x1="12" y1="17" x2="12.01" y2="17" />
+                            </svg>
+                        </span>
                         <div>{{ $errors->first() }}</div>
                     </div>
                 @endif
 
                 {{-- Header --}}
-                <div class="card-title">Cek email kamu 📬</div>
+                <div class="card-title">
+                    Cek Email Anda
+                </div>
                 <div class="card-sub">Kode 6 digit dikirim ke:</div>
 
                 <div class="email-badge">{{ session('otp_email') }}</div>
@@ -693,7 +642,14 @@ Halaman Verifikasi OTP — Activa Admin
                 {{-- Dev mode OTP display — HAPUS DI PRODUCTION --}}
                 @if (isset($debugOtp) && $debugOtp)
                     <div class="dev-box">
-                        <div class="dev-title">🔧 Mode Development</div>
+                        <div class="dev-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 18 22 12 16 6" />
+                                <polyline points="8 6 2 12 8 18" />
+                            </svg>
+                            Mode Development
+                        </div>
                         <div class="dev-otp" id="dev-otp" onclick="copyDevOTP('{{ $debugOtp }}')">{{ $debugOtp }}</div>
                         <div class="dev-hint">Klik kode untuk copy otomatis ke input</div>
                     </div>
@@ -705,8 +661,8 @@ Halaman Verifikasi OTP — Activa Admin
 
                     {{-- 6 Kotak OTP --}}
                     <div class="otp-row" id="otp-row">
-                        @for ($i = 0; $i < 6; $i++)
-                            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" autocomplete="off" {{ $i === 0 ? 'autofocus' : '' }}>
+                        @for ($i = 0; $i < 6; $i++) <input class="otp-box" type="text" maxlength="1" inputmode="numeric"
+                            aut ocomplete="off" {{ $i === 0 ? 'autofocus' : '' }}>
                         @endfor
                     </div>
                     <div class="otp-hint">Ketik angka — kotak akan berpindah otomatis</div>
@@ -734,11 +690,11 @@ Halaman Verifikasi OTP — Activa Admin
                 {{-- Resend --}}
                 <div class="resend-row">
                     <span class="resend-label">Tidak menerima kode?</span>
-                    <form action="{{ route('admin.send-otp') }}" method="POST" style="display:inline;" id="resend-form">
-                        @csrf
+                    <form action=" {{ route('admin.send-otp') }}" method="POST" style="display:inline;"
+                        id="resend-form"> @csrf
                         <input type="hidden" name="email" value="{{ session('otp_email') }}">
-                        <button type="submit" class="btn-resend" id="btn-resend" disabled>
-                            Kirim ulang (<span id="resend-timer">60</span>s)
+                        <button type="submit" class="btn-resend" id="btn-resend" disabled> Kirim ulang (<span
+                                id="resend-timer">60</span>s)
                         </button>
                     </form>
                 </div>
