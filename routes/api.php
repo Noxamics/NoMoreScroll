@@ -66,6 +66,7 @@ Route::prefix('auth')->group(function () {
     Route::post('forgot-password',[PasswordResetController::class, 'forgotPassword']);
     Route::post('verify-otp',     [PasswordResetController::class, 'verifyOtp']);
     Route::post('reset-password', [PasswordResetController::class, 'resetPassword']);
+    Route::get('/surveys', [SurveyController::class, 'index']);
 });
 
 // Admin Public Endpoints (OTP & Login)
