@@ -11,6 +11,7 @@ Halaman Login OTP Passwordless — Activa Admin
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="icon" type="image/svg+xml" href="{{ asset('../images/NewLogoEmblem2.svg') }}">
   <title>Login — Activa Admin</title>
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap"
@@ -47,6 +48,13 @@ Halaman Login OTP Passwordless — Activa Admin
       height: 100%;
     }
 
+    .logo-img {
+      width: 160px;
+      height: 140px;
+      object-fit: contain;
+      margin-bottom: 90px;
+    }
+
     body {
       background: var(--ice);
       font-family: var(--sans);
@@ -68,8 +76,9 @@ Halaman Login OTP Passwordless — Activa Admin
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 40px;
+      justify-content: flex-start;
+      gap: 10px;
+      padding: 20px 40px 40px 40px;
       position: relative;
       overflow: hidden;
     }
@@ -104,29 +113,6 @@ Halaman Login OTP Passwordless — Activa Admin
       z-index: 1;
     }
 
-    .brand-icon {
-      width: 44px;
-      height: 44px;
-      background: var(--teal);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 4px 16px rgba(13, 148, 136, .4);
-    }
-
-    .brand-name {
-      font-family: var(--serif);
-      font-size: 24px;
-      color: #fff;
-    }
-
-    .brand-name em {
-      color: #5EEAD4;
-      font-style: italic;
-    }
-
     .brand-tag {
       font-size: 10px;
       color: rgba(255, 255, 255, .4);
@@ -137,6 +123,7 @@ Halaman Login OTP Passwordless — Activa Admin
     .left-body {
       position: relative;
       z-index: 1;
+      gap: 30px;
     }
 
     .left-headline {
@@ -193,6 +180,7 @@ Halaman Login OTP Passwordless — Activa Admin
       color: rgba(255, 255, 255, .25);
       letter-spacing: .05em;
       position: relative;
+      margin-top: 230px;
       z-index: 1;
     }
 
@@ -349,10 +337,8 @@ Halaman Login OTP Passwordless — Activa Admin
     {{-- ── LEFT BRAND PANEL ── --}}
     <div class="left">
       <div class="brand">
-        <div class="brand-icon">⚡</div>
-        <div>
-          <div class="brand-name">Acti<em>va</em></div>
-          <div class="brand-tag">Admin Panel</div>
+        <div class="brand-icon">
+          <img src="../images/NewLogoPutih.svg" alt="Logo" class="logo-img">
         </div>
       </div>
 
@@ -366,20 +352,9 @@ Halaman Login OTP Passwordless — Activa Admin
           Dashboard terpusat untuk memantau hasil ML, mengelola pengguna,
           dan mengatur rekomendasi berbasis aturan.
         </div>
-        <div class="feat-list">
-          <div class="feat-item">
-            <div class="feat-dot">✓</div>Login aman tanpa password (OTP)
-          </div>
-          <div class="feat-item">
-            <div class="feat-dot">✓</div>Monitoring real-time hasil ML
-          </div>
-          <div class="feat-item">
-            <div class="feat-dot">✓</div>Export data kuesioner (CSV/JSON)
-          </div>
-        </div>
       </div>
 
-      <div class="left-foot">ACTIVA · SISTEM MONITORING DIGITAL WELLNESS</div>
+      <div class="left-foot">ACTIVA · MEASURE. IMPROVE. THRIVE.</div>
     </div>
 
     {{-- ── RIGHT LOGIN CARD ── --}}
@@ -389,17 +364,39 @@ Halaman Login OTP Passwordless — Activa Admin
         {{-- Flash messages --}}
         @if (session('error') === 'rate_limit')
           <div class="alert alert-error">
-            <span>⏳</span>
+            <span>
+              <!-- Clock Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </span>
             <div>OTP aktif masih berlaku. Tunggu minimal 1 menit sebelum kirim ulang.</div>
           </div>
         @elseif (session('error') === 'mail_failed')
           <div class="alert alert-error">
-            <span>❌</span>
+            <span>
+              <!-- X Circle Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="15" y1="9" x2="9" y2="15" />
+                <line x1="9" y1="9" x2="15" y2="15" />
+              </svg>
+            </span>
             <div>Gagal mengirim email. Periksa konfigurasi SMTP.</div>
           </div>
         @elseif (session('info'))
           <div class="alert alert-info">
-            <span>📧</span>
+            <span>
+              <!-- Mail Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <polyline points="3 7 12 13 21 7" />
+              </svg>
+            </span>
             <div>{{ session('info') }}</div>
           </div>
         @endif

@@ -28,7 +28,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
     Route::get('/monitoring', [MonitoringController::class, 'index'])->name('admin.monitoring');
     Route::get('/kuesioner', [KuesionerController::class, 'index'])->name('admin.kuesioner');
-    
+
     // Rules endpoints
     Route::get('/rules', [RuleController::class, 'index'])->name('admin.rules');
     Route::post('/rules', [RuleController::class, 'store'])->name('admin.rules.store');
