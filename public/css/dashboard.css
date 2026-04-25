@@ -1,121 +1,173 @@
-/**
- * public/css/dashboard.css
- * Activa Admin — Dashboard-specific styles
- */
+/* ═══════════════════════════════════════════════════════════
+   dashboard-additions.css
+   Tambahan CSS untuk section baru (7 Threshold, 6 Insights,
+   tab group, histogram legend)
+   ═══════════════════════════════════════════════════════════ */
 
-/* ── Layout helpers ─────────────────────────────────────────── */
-.mb-charts { margin-bottom: 16px; }
-
-/* ── Stat card — top-line variants ─────────────────────────── */
-.top-line--navy  { background: var(--navy); }
-.top-line--teal  { background: var(--teal); }
-.top-line--amber { background: var(--amber); }
-.top-line--red   { background: var(--red); }
-
-/* ── Stat card — icon background variants ───────────────────── */
-.stat-icon--navy  { background: var(--navy-xlt); }
-.stat-icon--teal  { background: var(--teal-lt); }
-.stat-icon--amber { background: var(--amber-lt); }
-.stat-icon--red   { background: var(--red-lt); }
-
-/* ── Stat card — value color variants ──────────────────────── */
-.stat-val--navy  { color: var(--navy); }
-.stat-val--teal  { color: var(--teal); }
-.stat-val--amber { color: var(--amber); }
-.stat-val--red   { color: var(--red); }
-
-/* ── Stat value unit suffix ─────────────────────────────────── */
-.stat-val-unit {
-    font-size:   14px;
-    font-weight: 400;
+/* ── Design tokens ─────────────────────────────────────────── */
+:root {
+    --navy  : #1E3A5F;
+    --teal  : #0D9488;
+    --amber : #D97706;
+    --red   : #E05252;
+    --ice   : #F0F9FF;
+    --text  : #4A6180;
+    --text2 : #8BA3BE;
+    --border: #E2EAF2;
+    --white : #ffffff;
+    --radius: 12px;
 }
 
-/* ── Donut chart canvas ─────────────────────────────────────── */
-.donut-canvas { max-height: 170px; }
+/* ── Section header ────────────────────────────────────────── */
+.section-header {
+    margin: 2rem 0 1rem;
+}
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 .25rem;
+}
+.section-sub {
+    font-size: .8rem;
+    color: var(--text2);
+    margin: 0;
+}
 
-/* ── Risk legend ────────────────────────────────────────────── */
-.risk-legend {
-    display:        flex;
+/* ── 7. Threshold grid ─────────────────────────────────────── */
+.threshold-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.threshold-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    border: 1.5px solid var(--border);
+    display: flex;
     flex-direction: column;
-    gap:            10px;
-    margin-top:     16px;
+    gap: .35rem;
+    transition: box-shadow .2s;
+}
+.threshold-card:hover {
+    box-shadow: 0 4px 16px rgba(30,58,95,.08);
 }
 
-.risk-legend-row {
-    display:         flex;
-    justify-content: space-between;
-    align-items:     center;
-    font-size:       13px;
+.threshold-card--teal  { border-left: 4px solid var(--teal); }
+.threshold-card--amber { border-left: 4px solid var(--amber); }
+.threshold-card--red   { border-left: 4px solid var(--red); }
+
+.threshold-icon  { font-size: 1.4rem; }
+.threshold-label {
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--navy);
+}
+.threshold-card--teal  .threshold-label { color: var(--teal); }
+.threshold-card--amber .threshold-label { color: var(--amber); }
+.threshold-card--red   .threshold-label { color: var(--red); }
+
+.threshold-range {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -.5px;
+}
+.threshold-desc {
+    font-size: .75rem;
+    color: var(--text2);
+    margin-top: .15rem;
 }
 
-.risk-legend-label {
-    display:     flex;
+/* ── 6. Insights grid ──────────────────────────────────────── */
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.insight-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: .85rem;
+    transition: box-shadow .2s, transform .15s;
+}
+.insight-card:hover {
+    box-shadow: 0 4px 16px rgba(30,58,95,.08);
+    transform: translateY(-1px);
+}
+
+.insight-card--teal  { border-left: 4px solid var(--teal); }
+.insight-card--amber { border-left: 4px solid var(--amber); }
+.insight-card--red   { border-left: 4px solid var(--red); }
+.insight-card--navy  { border-left: 4px solid var(--navy); }
+
+.insight-icon { font-size: 1.4rem; flex-shrink: 0; }
+.insight-text {
+    margin: 0;
+    font-size: .85rem;
+    color: var(--text);
+    line-height: 1.55;
+}
+.insight-text strong { color: var(--navy); }
+
+/* ── Tab group ─────────────────────────────────────────────── */
+.tab-group {
+    display: flex;
+    gap: .25rem;
+    background: var(--ice);
+    border-radius: 8px;
+    padding: .25rem;
+}
+
+.tab-btn {
+    padding: .3rem .75rem;
+    font-size: .78rem;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    font-family: inherit;
+}
+.tab-btn:hover  { color: var(--navy); }
+.tab-btn.active {
+    background: var(--white);
+    color: var(--navy);
+    box-shadow: 0 1px 4px rgba(30,58,95,.12);
+}
+
+/* ── Histogram legend badges ───────────────────────────────── */
+.histogram-legend {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
     align-items: center;
-    gap:         8px;
 }
 
-/* Dot color variants */
-.risk-legend-dot {
-    width:         10px;
-    height:        10px;
-    border-radius: 3px;
-    display:       inline-block;
-    flex-shrink:   0;
+.hist-badge {
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .25rem .65rem;
+    border-radius: 20px;
 }
+.hist-badge--teal  { background: rgba(13,148,136,.12);  color: var(--teal); }
+.hist-badge--amber { background: rgba(217,119,6,.12);   color: var(--amber); }
+.hist-badge--red   { background: rgba(224,82,82,.12);   color: var(--red); }
 
-.dot-teal  { background: var(--teal); }
-.dot-amber { background: var(--amber); }
-.dot-red   { background: var(--red); }
-.dot-navy  { background: var(--navy); }
-
-/* Value color variants */
-.risk-legend-value { font-weight: 700; }
-
-.value-teal  { color: var(--teal); }
-.value-amber { color: var(--amber); }
-.value-red   { color: var(--red); }
-.value-navy  { color: var(--navy); }
-
-/* ── User table ─────────────────────────────────────────────── */
-.user-name  { font-weight: 600; font-size: 13px; }
-.user-email { font-size: 11px; color: var(--text3); }
-
-/* Focus score */
-.focus-score  { font-weight: 700; }
-.focus-high   { color: var(--teal); }
-.focus-medium { color: var(--amber); }
-.focus-low    { color: var(--red); }
-
-/* Empty state */
-.td-empty {
-    text-align: center;
-    color:      var(--text3);
-    padding:    20px;
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .threshold-grid { grid-template-columns: 1fr; }
+    .insights-grid  { grid-template-columns: 1fr; }
+    .tab-group      { flex-wrap: wrap; }
 }
-
-/* ── Activity log ───────────────────────────────────────────── */
-.activity-item {
-    display:     flex;
-    align-items: center;
-    gap:         11px;
-    padding:     10px 0;
-}
-
-.activity-item:not(:last-child) {
-    border-bottom: 1px solid var(--border);
-}
-
-.activity-icon {
-    width:           34px;
-    height:          34px;
-    border-radius:   9px;
-    background:      #EEF4FB;
-    display:         flex;
-    align-items:     center;
-    justify-content: center;
-    font-size:       15px;
-    flex-shrink:     0;
-}
-
-.activity-text { font-size: 13px; font-weight: 500; }
-.activity-time { font-size: 11px; color: var(--text3); }    
