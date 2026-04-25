@@ -4,32 +4,31 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAdminUsersCollection extends Migration
+/**
+ * Collection: admin_users
+ *
+ * Fields:
+ *   _id, name, email, role, is_active, created_at
+ *
+ * Catatan:
+ *   - Tidak ada 'password' — admin login via email + OTP (nilai OTP dari ENV)
+ *   - Tidak ada 'updated_at' — tidak diperlukan
+ */
+return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::connection('mongodb')->create('admin_users', function (Blueprint $collection) {
-
-            $collection->id();
-
             $collection->string('name');
             $collection->string('email')->unique();
-            $collection->string('password');
-
             $collection->string('role')->default('admin');
-
-            $collection->timestamps();
+            $collection->boolean('is_active')->default(true);
+            $collection->timestamp('created_at')->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('admin_users_collection');
+        Schema::connection('mongodb')->dropIfExists('admin_users');
     }
 };

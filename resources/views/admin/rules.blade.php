@@ -70,7 +70,7 @@
     <div class="rule-id">R{{ str_pad($loop->index + 1, 2, '0', STR_PAD_LEFT) }}</div>
     <div class="rule-name">{{ $rule->name }}</div>
     <span class="pill {{ $priCls }} mr-2">{{ $priLbl }}</span>
-    <form method="POST" action="{{ route('admin.rules.toggle', $rule->id) }}">
+    <form method="POST" action="{{ route('admin.rules.toggle', $rule->_id) }}">
       @csrf @method('PATCH')
       <label class="tog">
         <input type="checkbox" {{ $rule->is_active ? 'checked' : '' }} onchange="this.form.submit()">
@@ -94,11 +94,17 @@
   <div class="rule-foot">
     <div class="rule-meta">Diterapkan ke <strong>{{ number_format($rule->applied_count ?? 0) }}</strong> user</div>
     <div class="rule-actions">
-      {{-- FIX: pindahkan json_encode ke data-rule attribute, hindari JS false-positive VS Code --}}
+      {{-- Gunakan individual data attributes untuk avoid JSON parsing issues --}}
       <button class="btn btn-ghost btn-sm"
-              data-rule="{{ htmlspecialchars(json_encode($rule), ENT_QUOTES, 'UTF-8') }}"
-              onclick="openEdit(JSON.parse(this.dataset.rule))">✏ Edit</button>
-      <form method="POST" action="{{ route('admin.rules.destroy', $rule->id) }}"
+              data-id="{{ $rule->_id }}"
+              data-name="{{ $rule->name }}"
+              data-variable="{{ $rule->variable }}"
+              data-operator="{{ $rule->operator }}"
+              data-value="{{ $rule->value }}"
+              data-recommendation="{{ $rule->recommendation }}"
+              data-priority="{{ $rule->priority }}"
+              onclick="openEdit(this)">✏ Edit</button>
+      <form method="POST" action="{{ route('admin.rules.destroy', $rule->_id) }}"
             onsubmit="return confirm('Hapus rule ini?')">
         @csrf @method('DELETE')
         <button type="submit" class="btn btn-danger btn-sm">✕ Hapus</button>
