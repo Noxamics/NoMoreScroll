@@ -1,28 +1,32 @@
 /**
  * public/js/dashboard.js
- * Activa Admin — Dashboard Charts (v2)
- * Sections: 1-Donut, 2-ScoreTrend, 3-GroupedBar, 4-Submissions, 5-Histogram
+ * Activa Admin — Dashboard Charts (Complete)
+ * Chart 1 (Score Trend)    : Bar chart, toggle Harian/Mingguan/Bulanan
+ * Chart 2 (Risk Level)     : Doughnut chart
+ * Chart 3 (Kategori)       : Grouped bar chart, dropdown filter
+ * Chart 4 (Submissions)    : Bar chart harian
+ * Chart 5 (Histogram)      : Bar chart distribusi skor
+ * Palette: Navy #1E3A5F | Teal #0D9488 | Amber #D97706 | Red #E05252
  * Depends on: Chart.js >= 4.4
  */
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* ── Design tokens (sesuai palette Activa) ─────────────── */
+    /* ── Design tokens ─────────────────────────────────────── */
     const C = {
-        navy  : '#1E3A5F',
-        teal  : '#0D9488',
-        amber : '#D97706',
-        red   : '#E05252',
-        ice   : '#F0F9FF',
-        text  : '#4A6180',
-        grid  : 'rgba(30,58,95,0.06)',
-        white : '#ffffff',
+        navy   : '#1E3A5F',
+        navyLt : '#264875',
+        teal   : '#0D9488',
+        amber  : '#D97706',
+        red    : '#E05252',
+        text   : '#4A6180',
+        grid   : 'rgba(30,58,95,0.06)',
+        white  : '#ffffff',
     };
 
-    /* ── Shared defaults ───────────────────────────────────── */
     const TOOLTIP = {
         backgroundColor : C.white,
-        borderColor     : '#E2EAF2',
+        borderColor     : '#E4EEF6',
         borderWidth     : 1,
         titleColor      : C.navy,
         bodyColor       : C.text,
@@ -36,21 +40,121 @@ document.addEventListener('DOMContentLoaded', function () {
         ...opts,
     });
 
-    /* ── Read data bridge ──────────────────────────────────── */
-    const el = document.getElementById('chart-data');
-    if (!el) return;
+    function safeJson(str, fallback) {
+        try { return JSON.parse(str || 'null') || fallback; }
+        catch (e) { return fallback; }
+    }
 
-    const riskDist         = JSON.parse(el.dataset.riskDist         || '[]');
-    const scoreTrend       = JSON.parse(el.dataset.scoreTrend       || '{}');
-    const groupedBar       = JSON.parse(el.dataset.groupedBar       || '{}');
-    const dailySubmissions = JSON.parse(el.dataset.dailySubmissions || '{}');
-    const scoreHistogram   = JSON.parse(el.dataset.scoreHistogram   || '{}');
+    /* ── Read data bridge dari controller ──────────────────── */
+    const el = document.getElementById('chart-data');
+
+    const _riskDist         = el ? safeJson(el.dataset.riskDist,         [])                        : [];
+    const _scoreTrend       = el ? safeJson(el.dataset.scoreTrend,       {})                        : {};
+    const _groupedBar       = el ? safeJson(el.dataset.groupedBar,       {})                        : {};
+    const _dailySubmissions = el ? safeJson(el.dataset.dailySubmissions, { labels: [], data: [] })  : { labels: [], data: [] };
+    const _scoreHistogram   = el ? safeJson(el.dataset.scoreHistogram,   { labels: [], data: [] })  : { labels: [], data: [] };
+
+    /* ── Data Dummy ─────────────────────────────────────────── */
+    const DUMMY = {
+        riskDist : [
+            { label: 'Rendah', pct: 35, count: 45, color: 'teal'  },
+            { label: 'Sedang', pct: 52, count: 66, color: 'amber' },
+            { label: 'Tinggi', pct: 13, count: 17, color: 'red'   },
+        ],
+        scoreTrend : {
+            daily   : { labels: ['Sen','Sel','Rab','Kam','Jum','Sab','Min'], data: [52,58,55,63,60,67,64] },
+            weekly  : { labels: ['Mg 1','Mg 2','Mg 3','Mg 4'],              data: [54,57,61,65] },
+            monthly : { labels: ['Jan','Feb','Mar','Apr','Mei','Jun'],       data: [48,52,55,59,62,65] },
+        },
+        groupedBar : {
+            byRole   : { labels: ['Mahasiswa','Pekerja','Lainnya'],                         rendah: [30,42,28], sedang: [50,43,52], tinggi: [20,15,20] },
+            byGender : { labels: ['Laki-laki','Perempuan'],                                 rendah: [30,40],    sedang: [50,54],    tinggi: [20,6]    },
+            byAge    : { labels: ['< 18','18–24','25–34','35–44','45+'],                    rendah: [20,28,38,45,50], sedang: [55,52,48,42,38], tinggi: [25,20,14,13,12] },
+            byRegion : { labels: ['Jawa','Sumatera','Kalimantan','Sulawesi','Lainnya'],     rendah: [33,36,40,38,42], sedang: [52,50,48,50,46], tinggi: [15,14,12,12,12] },
+        },
+        dailySubmissions : {
+            labels : ['19 Apr','20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr'],
+            data   : [8,14,9,18,22,20,27],
+        },
+        scoreHistogram : {
+            labels : ['0–9','10–19','20–29','30–39','40–49','50–59','60–69','70–79','80–89','90–100'],
+            data   : [2,4,8,14,22,30,24,16,10,6],
+        },
+    };
+
+    /* Fallback ke dummy jika data controller kosong */
+    const riskDist         = _riskDist.length              > 0 ? _riskDist         : DUMMY.riskDist;
+    const scoreTrend       = Object.keys(_scoreTrend).length   > 0 ? _scoreTrend   : DUMMY.scoreTrend;
+    const groupedBar       = Object.keys(_groupedBar).length   > 0 ? _groupedBar   : DUMMY.groupedBar;
+    const dailySubmissions = _dailySubmissions.labels?.length  > 0 ? _dailySubmissions : DUMMY.dailySubmissions;
+    const scoreHistogram   = _scoreHistogram.labels?.length    > 0 ? _scoreHistogram   : DUMMY.scoreHistogram;
+
+    /* Helper: warna selang-seling navy per bar */
+    function altColors(n) {
+        return Array.from({ length: n }, (_, i) => i % 2 === 0 ? C.navy : C.navyLt);
+    }
 
     /* ═══════════════════════════════════════════════════════
-       1. DONUT — Distribusi Risk Level
+       1. SCORE TREND — Bar Chart
+    ═══════════════════════════════════════════════════════ */
+    const trendEl = document.getElementById('scoreTrendChart');
+    let scoreTrendChart = null;
+
+    function buildTrendData(period) {
+        const src = scoreTrend[period] || scoreTrend['daily'];
+        return {
+            labels   : src.labels,
+            datasets : [{
+                label           : 'Avg. Skor',
+                data            : src.data,
+                backgroundColor : altColors(src.data.length),
+                borderRadius    : 5,
+                borderSkipped   : false,
+            }],
+        };
+    }
+
+    function renderScoreTrend(period) {
+        if (!trendEl) return;
+        if (scoreTrendChart) {
+            scoreTrendChart.data = buildTrendData(period);
+            scoreTrendChart.update('active');
+        } else {
+            scoreTrendChart = new Chart(trendEl, {
+                type    : 'bar',
+                data    : buildTrendData(period),
+                options : {
+                    responsive          : true,
+                    maintainAspectRatio : false,
+                    interaction         : { mode: 'index', intersect: false },
+                    plugins : {
+                        legend  : { display: false },
+                        tooltip : { ...TOOLTIP, callbacks: { label: ctx => ` Skor: ${ctx.parsed.y}` } },
+                    },
+                    scales : {
+                        x : AXIS(),
+                        y : AXIS({ min: 0, max: 100, ticks: { ...AXIS().ticks, callback: v => v } }),
+                    },
+                },
+            });
+        }
+    }
+
+    renderScoreTrend('daily');
+
+    document.getElementById('scoreTrendTabs')?.addEventListener('click', e => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        document.querySelectorAll('#scoreTrendTabs .tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderScoreTrend(btn.dataset.period);
+    });
+
+    /* ═══════════════════════════════════════════════════════
+       2. DONUT — Distribusi Risk Level
     ═══════════════════════════════════════════════════════ */
     const donutEl = document.getElementById('donutChart');
-    if (donutEl && riskDist.length > 0) {
+    if (donutEl) {
         new Chart(donutEl, {
             type : 'doughnut',
             data : {
@@ -64,96 +168,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 }],
             },
             options : {
-                responsive : true,
-                cutout     : '72%',
-                plugins    : {
+                responsive          : true,
+                maintainAspectRatio : false,
+                cutout              : '72%',
+                plugins : {
                     legend  : { display: false },
-                    tooltip : {
-                        ...TOOLTIP,
-                        callbacks : {
-                            label : ctx => ` ${ctx.label}: ${ctx.parsed}%`,
-                        },
-                    },
+                    tooltip : { ...TOOLTIP, callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } },
                 },
             },
         });
-    }
 
-    /* ═══════════════════════════════════════════════════════
-       2. SCORE TREND LINE CHART — dengan tab Harian/Mingguan/Bulanan
-    ═══════════════════════════════════════════════════════ */
-    const trendEl = document.getElementById('scoreTrendChart');
-    let scoreTrendChart = null;
-
-    function buildScoreTrendDataset(data, labels) {
-        return {
-            labels,
-            datasets : [{
-                label           : 'Avg. Skor Ketergantungan',
-                data,
-                borderColor     : C.navy,
-                backgroundColor : 'rgba(30,58,95,0.08)',
-                fill            : true,
-                tension         : 0.45,
-                pointRadius     : 4,
-                pointBackgroundColor : C.navy,
-                pointBorderColor     : C.white,
-                pointBorderWidth     : 2,
-                borderWidth     : 2.5,
-            }],
-        };
-    }
-
-    function renderScoreTrend(period) {
-        if (!trendEl || !scoreTrend[period]) return;
-        const { labels, data } = scoreTrend[period];
-
-        if (scoreTrendChart) {
-            scoreTrendChart.data = buildScoreTrendDataset(data, labels);
-            scoreTrendChart.update('active');
-        } else {
-            scoreTrendChart = new Chart(trendEl, {
-                type    : 'line',
-                data    : buildScoreTrendDataset(data, labels),
-                options : {
-                    responsive  : true,
-                    interaction : { mode: 'index', intersect: false },
-                    plugins : {
-                        legend  : { display: false },
-                        tooltip : {
-                            ...TOOLTIP,
-                            callbacks : {
-                                label : ctx => ` Skor: ${ctx.parsed.y}`,
-                            },
-                        },
-                        annotation: {},
-                    },
-                    scales : {
-                        x : AXIS(),
-                        y : AXIS({
-                            min   : 30,
-                            max   : 80,
-                            ticks : {
-                                ...AXIS().ticks,
-                                callback : v => v,
-                            },
-                        }),
-                    },
-                },
+        /* Render legend dinamis jika blade tidak merender (data kosong dari controller) */
+        const legendEl = document.querySelector('.risk-legend');
+        if (legendEl && legendEl.children.length === 0) {
+            const colorMap = { teal: C.teal, amber: C.amber, red: C.red };
+            riskDist.forEach(d => {
+                legendEl.innerHTML += `
+                    <div class="risk-legend-row">
+                        <span class="risk-legend-label">
+                            <span class="risk-legend-dot" style="background:${colorMap[d.color]}"></span>
+                            ${d.label}
+                        </span>
+                        <span class="risk-legend-value" style="color:${colorMap[d.color]}">
+                            ${d.pct}% · ${d.count} user
+                        </span>
+                    </div>`;
             });
         }
     }
-
-    renderScoreTrend('daily');
-
-    // Tab switcher
-    document.getElementById('scoreTrendTabs')?.addEventListener('click', e => {
-        const btn = e.target.closest('.tab-btn');
-        if (!btn) return;
-        document.querySelectorAll('#scoreTrendTabs .tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderScoreTrend(btn.dataset.period);
-    });
 
     /* ═══════════════════════════════════════════════════════
        3. GROUPED BAR — Perbandingan Kategori
@@ -161,79 +203,44 @@ document.addEventListener('DOMContentLoaded', function () {
     const groupedEl = document.getElementById('groupedBarChart');
     let groupedBarChart = null;
 
-    function buildGroupedDataset(groupKey) {
-        const g = groupedBar[groupKey];
+    function buildGroupedData(key) {
+        const g = groupedBar[key] || groupedBar['byRole'];
         if (!g) return null;
         return {
             labels   : g.labels,
             datasets : [
-                {
-                    label           : 'Rendah',
-                    data            : g.rendah,
-                    backgroundColor : C.teal,
-                    borderRadius    : 4,
-                    borderSkipped   : false,
-                },
-                {
-                    label           : 'Sedang',
-                    data            : g.sedang,
-                    backgroundColor : C.amber,
-                    borderRadius    : 4,
-                    borderSkipped   : false,
-                },
-                {
-                    label           : 'Tinggi',
-                    data            : g.tinggi,
-                    backgroundColor : C.red,
-                    borderRadius    : 4,
-                    borderSkipped   : false,
-                },
+                { label: 'Rendah', data: g.rendah, backgroundColor: C.teal,  borderRadius: 4, borderSkipped: false },
+                { label: 'Sedang', data: g.sedang, backgroundColor: C.amber, borderRadius: 4, borderSkipped: false },
+                { label: 'Tinggi', data: g.tinggi, backgroundColor: C.red,   borderRadius: 4, borderSkipped: false },
             ],
         };
     }
 
-    function renderGroupedBar(groupKey) {
+    function renderGroupedBar(key) {
         if (!groupedEl) return;
-        const chartData = buildGroupedDataset(groupKey);
-        if (!chartData) return;
-
+        const data = buildGroupedData(key);
+        if (!data) return;
         if (groupedBarChart) {
-            groupedBarChart.data = chartData;
+            groupedBarChart.data = data;
             groupedBarChart.update('active');
         } else {
             groupedBarChart = new Chart(groupedEl, {
                 type    : 'bar',
-                data    : chartData,
+                data,
                 options : {
-                    responsive  : true,
-                    interaction : { mode: 'index', intersect: false },
+                    responsive          : true,
+                    maintainAspectRatio : false,
+                    interaction         : { mode: 'index', intersect: false },
                     plugins : {
                         legend : {
                             position : 'top',
-                            labels   : {
-                                color    : C.text,
-                                font     : { family: 'DM Sans', size: 11 },
-                                boxWidth : 12,
-                                padding  : 16,
-                            },
+                            labels   : { color: C.text, font: { family: 'DM Sans', size: 11 }, boxWidth: 12, padding: 16 },
                         },
-                        tooltip : {
-                            ...TOOLTIP,
-                            callbacks : {
-                                label : ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%`,
-                            },
-                        },
+                        tooltip : { ...TOOLTIP, callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` } },
                     },
                     scales : {
                         x : AXIS(),
-                        y : AXIS({
-                            min   : 0,
-                            max   : 70,
-                            ticks : {
-                                ...AXIS().ticks,
-                                callback : v => v + '%',
-                            },
-                        }),
+                        y : AXIS({ min: 0, max: 100, ticks: { ...AXIS().ticks, callback: v => v + '%' } }),
                     },
                 },
             });
@@ -242,58 +249,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
     renderGroupedBar('byRole');
 
-    document.getElementById('groupedBarTabs')?.addEventListener('click', e => {
-        const btn = e.target.closest('.tab-btn');
-        if (!btn) return;
-        document.querySelectorAll('#groupedBarTabs .tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderGroupedBar(btn.dataset.group);
+    document.getElementById('groupedBarSelect')?.addEventListener('change', e => {
+        renderGroupedBar(e.target.value);
     });
 
     /* ═══════════════════════════════════════════════════════
-       4. SUBMISSIONS LINE CHART — Kuesioner per Hari
+       4. SUBMISSIONS — Bar Chart (Teal)
     ═══════════════════════════════════════════════════════ */
     const submEl = document.getElementById('submissionsChart');
-    if (submEl && dailySubmissions.labels) {
+    if (submEl) {
         new Chart(submEl, {
-            type : 'line',
+            type : 'bar',
             data : {
                 labels   : dailySubmissions.labels,
                 datasets : [{
                     label           : 'Kuesioner Terisi',
                     data            : dailySubmissions.data,
-                    borderColor     : C.teal,
-                    backgroundColor : 'rgba(13,148,136,0.09)',
-                    fill            : true,
-                    tension         : 0.4,
-                    pointRadius     : 5,
-                    pointBackgroundColor : C.teal,
-                    pointBorderColor     : C.white,
-                    pointBorderWidth     : 2,
-                    borderWidth     : 2.5,
+                    backgroundColor : C.teal,
+                    borderRadius    : 5,
+                    borderSkipped   : false,
                 }],
             },
             options : {
-                responsive  : true,
-                interaction : { mode: 'index', intersect: false },
+                responsive          : true,
+                maintainAspectRatio : false,
+                interaction         : { mode: 'index', intersect: false },
                 plugins : {
                     legend  : { display: false },
-                    tooltip : {
-                        ...TOOLTIP,
-                        callbacks : {
-                            label : ctx => ` ${ctx.parsed.y} kuesioner`,
-                        },
-                    },
+                    tooltip : { ...TOOLTIP, callbacks: { label: ctx => ` ${ctx.parsed.y} kuesioner` } },
                 },
                 scales : {
                     x : AXIS(),
-                    y : AXIS({
-                        beginAtZero : true,
-                        ticks       : {
-                            ...AXIS().ticks,
-                            callback : v => v + ' user',
-                        },
-                    }),
+                    y : AXIS({ beginAtZero: true, ticks: { ...AXIS().ticks, precision: 0, callback: v => v + ' user' } }),
                 },
             },
         });
@@ -301,15 +288,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* ═══════════════════════════════════════════════════════
        5. HISTOGRAM — Distribusi Skor
-       Warna bar sesuai threshold: teal(0-39), amber(40-69), red(70-100)
+       Teal=0–39, Amber=40–69, Red=70–100
     ═══════════════════════════════════════════════════════ */
     const histEl = document.getElementById('histogramChart');
-    if (histEl && scoreHistogram.labels) {
-        // Tentukan warna tiap bin sesuai range
+    if (histEl) {
         const binColors = scoreHistogram.labels.map(label => {
-            const start = parseInt(label.split('–')[0].replace('–', '').trim());
-            if (start < 40)  return C.teal;
-            if (start < 70)  return C.amber;
+            const start = parseInt(label.split('–')[0].trim());
+            if (start < 40) return C.teal;
+            if (start < 70) return C.amber;
             return C.red;
         });
 
@@ -318,38 +304,26 @@ document.addEventListener('DOMContentLoaded', function () {
             data : {
                 labels   : scoreHistogram.labels,
                 datasets : [{
-                    label           : 'Jumlah User',
-                    data            : scoreHistogram.data,
-                    backgroundColor : binColors,
-                    borderColor     : binColors.map(c => c + 'cc'),
-                    borderWidth     : 1,
-                    borderRadius    : 4,
-                    borderSkipped   : false,
+                    label              : 'Jumlah User',
+                    data               : scoreHistogram.data,
+                    backgroundColor    : binColors,
+                    borderRadius       : 4,
+                    borderSkipped      : false,
                     categoryPercentage : 0.9,
                     barPercentage      : 0.85,
                 }],
             },
             options : {
-                responsive  : true,
-                interaction : { mode: 'index', intersect: false },
+                responsive          : true,
+                maintainAspectRatio : false,
+                interaction         : { mode: 'index', intersect: false },
                 plugins : {
                     legend  : { display: false },
-                    tooltip : {
-                        ...TOOLTIP,
-                        callbacks : {
-                            label : ctx => ` ${ctx.parsed.y} user`,
-                        },
-                    },
+                    tooltip : { ...TOOLTIP, callbacks: { label: ctx => ` ${ctx.parsed.y} user` } },
                 },
                 scales : {
                     x : AXIS(),
-                    y : AXIS({
-                        beginAtZero : true,
-                        ticks       : {
-                            ...AXIS().ticks,
-                            callback : v => v + ' user',
-                        },
-                    }),
+                    y : AXIS({ beginAtZero: true, ticks: { ...AXIS().ticks, precision: 0, callback: v => v + ' user' } }),
                 },
             },
         });
