@@ -323,15 +323,8 @@ Layout utama Activa Admin Panel
     }
 
     @keyframes blink {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: .3
-      }
+      0%, 100% { opacity: 1 }
+      50% { opacity: .3 }
     }
 
     .content {
@@ -443,17 +436,9 @@ Layout utama Activa Admin Panel
       font-weight: 500;
     }
 
-    .up {
-      color: var(--green)
-    }
-
-    .down {
-      color: var(--red)
-    }
-
-    .neu {
-      color: var(--text3)
-    }
+    .up  { color: var(--green) }
+    .down { color: var(--red) }
+    .neu  { color: var(--text3) }
 
     /* PILLS */
     .pill {
@@ -466,35 +451,12 @@ Layout utama Activa Admin Panel
       gap: 4px;
     }
 
-    .pill-teal {
-      background: var(--teal-lt);
-      color: var(--teal);
-    }
-
-    .pill-red {
-      background: var(--red-lt);
-      color: var(--red);
-    }
-
-    .pill-amber {
-      background: var(--amber-lt);
-      color: var(--amber);
-    }
-
-    .pill-blue {
-      background: var(--blue-lt);
-      color: var(--blue);
-    }
-
-    .pill-violet {
-      background: var(--violet-lt);
-      color: var(--violet);
-    }
-
-    .pill-navy {
-      background: var(--navy-xlt);
-      color: var(--navy);
-    }
+    .pill-teal   { background: var(--teal-lt);   color: var(--teal);   }
+    .pill-red    { background: var(--red-lt);    color: var(--red);    }
+    .pill-amber  { background: var(--amber-lt);  color: var(--amber);  }
+    .pill-blue   { background: var(--blue-lt);   color: var(--blue);   }
+    .pill-violet { background: var(--violet-lt); color: var(--violet); }
+    .pill-navy   { background: var(--navy-xlt);  color: var(--navy);   }
 
     /* BUTTONS */
     .btn {
@@ -528,9 +490,7 @@ Layout utama Activa Admin Panel
       box-shadow: 0 3px 10px rgba(30, 58, 95, 0.25);
     }
 
-    .btn-navy:hover {
-      background: var(--navy-lt);
-    }
+    .btn-navy:hover { background: var(--navy-lt); }
 
     .btn-ghost {
       background: var(--white);
@@ -549,9 +509,7 @@ Layout utama Activa Admin Panel
       border: 1px solid rgba(224, 82, 82, 0.2);
     }
 
-    .btn-danger:hover {
-      background: rgba(224, 82, 82, 0.18);
-    }
+    .btn-danger:hover { background: rgba(224, 82, 82, 0.18); }
 
     .btn-sm {
       padding: 6px 12px;
@@ -576,19 +534,12 @@ Layout utama Activa Admin Panel
       box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
     }
 
-    .inp::placeholder {
-      color: var(--text3);
-    }
+    .inp::placeholder { color: var(--text3); }
 
     /* TABLE */
-    .tbl-wrap {
-      overflow-x: auto;
-    }
+    .tbl-wrap { overflow-x: auto; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
 
     thead th {
       padding: 10px 14px;
@@ -607,50 +558,19 @@ Layout utama Activa Admin Panel
       transition: background .1s;
     }
 
-    tbody tr:hover {
-      background: #F5F9FF;
-    }
+    tbody tr:hover { background: #F5F9FF; }
+    tbody tr:last-child { border-bottom: none; }
 
-    tbody tr:last-child {
-      border-bottom: none;
-    }
-
-    td {
-      padding: 12px 14px;
-      font-size: 13px;
-    }
+    td { padding: 12px 14px; font-size: 13px; }
 
     /* GRIDS */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
-
-    .grid-2-1 {
-      display: grid;
-      grid-template-columns: 1fr 320px;
-      gap: 16px;
-    }
+    .grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3   { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid-4   { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .grid-2-1 { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
 
     /* SCORE BAR */
-    .score-bar-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .score-bar-wrap { display: flex; align-items: center; gap: 8px; }
 
     .score-bar {
       flex: 1;
@@ -661,24 +581,11 @@ Layout utama Activa Admin Panel
       min-width: 50px;
     }
 
-    .score-bar-fill {
-      height: 100%;
-      border-radius: 99px;
-    }
+    .score-bar-fill { height: 100%; border-radius: 99px; }
 
     /* TOGGLE SWITCH */
-    .tog {
-      position: relative;
-      width: 38px;
-      height: 21px;
-      flex-shrink: 0;
-    }
-
-    .tog input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+    .tog { position: relative; width: 38px; height: 21px; flex-shrink: 0; }
+    .tog input { opacity: 0; width: 0; height: 0; }
 
     .tog-track {
       position: absolute;
@@ -701,62 +608,27 @@ Layout utama Activa Admin Panel
       transition: transform .2s;
     }
 
-    .tog input:checked+.tog-track {
-      background: var(--teal);
-    }
-
-    .tog input:checked+.tog-track::before {
-      transform: translateX(17px);
-    }
+    .tog input:checked + .tog-track { background: var(--teal); }
+    .tog input:checked + .tog-track::before { transform: translateX(17px); }
 
     /* ANIMATIONS */
     @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(12px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
+      from { opacity: 0; transform: translateY(12px) }
+      to   { opacity: 1; transform: translateY(0) }
     }
 
-    .stat-card {
-      animation: fadeUp .4s ease both;
-    }
-
-    .stat-card:nth-child(1) {
-      animation-delay: .05s
-    }
-
-    .stat-card:nth-child(2) {
-      animation-delay: .10s
-    }
-
-    .stat-card:nth-child(3) {
-      animation-delay: .15s
-    }
-
-    .stat-card:nth-child(4) {
-      animation-delay: .20s
-    }
+    .stat-card { animation: fadeUp .4s ease both; }
+    .stat-card:nth-child(1) { animation-delay: .05s }
+    .stat-card:nth-child(2) { animation-delay: .10s }
+    .stat-card:nth-child(3) { animation-delay: .15s }
+    .stat-card:nth-child(4) { animation-delay: .20s }
 
     @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
+      from { opacity: 0; transform: translateY(10px) }
+      to   { opacity: 1; transform: translateY(0) }
     }
 
-    .card {
-      animation: slideUp .35s ease both;
-    }
+    .card { animation: slideUp .35s ease both; }
 
     /* MODAL */
     .modal-overlay {
@@ -771,9 +643,7 @@ Layout utama Activa Admin Panel
       padding: 20px;
     }
 
-    .modal-overlay.show {
-      display: flex;
-    }
+    .modal-overlay.show { display: flex; }
 
     .modal-box {
       background: var(--white);
@@ -807,14 +677,10 @@ Layout utama Activa Admin Panel
       line-height: 1;
     }
 
-    .modal-close:hover {
-      color: var(--text);
-    }
+    .modal-close:hover { color: var(--text); }
 
     /* FORM FIELDS */
-    .field {
-      margin-bottom: 14px;
-    }
+    .field { margin-bottom: 14px; }
 
     .field label {
       display: block;
@@ -864,57 +730,29 @@ Layout utama Activa Admin Panel
     }
 
     /* SCROLLBAR */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--border2);
-      border-radius: 3px;
-    }
-
+    /* ── FIX CANVAS CHART ── */
     canvas {
-      max-height: 230px;
+      display: block;
+      width: 100% !important;
+      max-height: 300px;
     }
 
     /* RESPONSIVE */
     @media(max-width:1200px) {
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .grid-2-1 {
-        grid-template-columns: 1fr;
-      }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-2-1   { grid-template-columns: 1fr; }
     }
 
     @media(max-width:768px) {
-      .sidebar {
-        display: none;
-      }
-
-      .main {
-        margin-left: 0;
-      }
-
-      .content {
-        padding: 16px;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .grid-2,
-      .grid-3,
-      .grid-4 {
-        grid-template-columns: 1fr;
-      }
+      .sidebar  { display: none; }
+      .main     { margin-left: 0; }
+      .content  { padding: 16px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     }
   </style>
   @stack('styles')
