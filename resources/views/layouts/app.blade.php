@@ -17,8 +17,6 @@ Layout utama Activa Admin Panel
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/rules.css') }}">
   @stack('head-scripts')
   <style>
     :root {
@@ -268,6 +266,7 @@ Layout utama Activa Admin Panel
       flex-direction: column;
     }
 
+    /* TOPBAR */
     .topbar {
       background: var(--white);
       border-bottom: 1px solid var(--border);
@@ -323,382 +322,22 @@ Layout utama Activa Admin Panel
     }
 
     @keyframes blink {
-      0%, 100% { opacity: 1 }
-      50% { opacity: .3 }
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .3
+      }
     }
 
     .content {
       padding: 28px;
     }
 
-    /* CARDS */
-    .card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 22px;
-      box-shadow: var(--shadow);
-    }
-
-    .card-title {
-      font-family: var(--serif);
-      font-size: 16px;
-      color: var(--navy);
-      margin-bottom: 2px;
-    }
-
-    .card-sub {
-      font-size: 11px;
-      color: var(--text3);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 18px;
-    }
-
-    .card-action {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--teal);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-family: var(--sans);
-      text-decoration: none;
-    }
-
-    .card-action:hover {
-      opacity: .7;
-    }
-
-    /* STAT CARDS */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 22px;
-    }
-
-    .stat-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card:hover {
-      box-shadow: var(--shadow-md);
-    }
-
-    .top-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      border-radius: 99px 99px 0 0;
-    }
-
-    .stat-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 17px;
-      margin-bottom: 12px;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--text3);
-      font-weight: 500;
-      margin-bottom: 4px;
-    }
-
-    .stat-val {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -1px;
-      margin-bottom: 4px;
-      font-family: var(--serif);
-    }
-
-    .stat-change {
-      font-size: 11px;
-      font-weight: 500;
-    }
-
-    .up  { color: var(--green) }
-    .down { color: var(--red) }
-    .neu  { color: var(--text3) }
-
-    /* PILLS */
-    .pill {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 99px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .pill-teal   { background: var(--teal-lt);   color: var(--teal);   }
-    .pill-red    { background: var(--red-lt);    color: var(--red);    }
-    .pill-amber  { background: var(--amber-lt);  color: var(--amber);  }
-    .pill-blue   { background: var(--blue-lt);   color: var(--blue);   }
-    .pill-violet { background: var(--violet-lt); color: var(--violet); }
-    .pill-navy   { background: var(--navy-xlt);  color: var(--navy);   }
-
-    /* BUTTONS */
-    .btn {
-      padding: 9px 18px;
-      border-radius: var(--radius);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: var(--sans);
-      transition: all .15s;
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .btn-teal {
-      background: var(--teal);
-      color: #fff;
-      box-shadow: 0 3px 10px rgba(13, 148, 136, 0.28);
-    }
-
-    .btn-teal:hover {
-      background: var(--teal-dk);
-      transform: translateY(-1px);
-    }
-
-    .btn-navy {
-      background: var(--navy);
-      color: #fff;
-      box-shadow: 0 3px 10px rgba(30, 58, 95, 0.25);
-    }
-
-    .btn-navy:hover { background: var(--navy-lt); }
-
-    .btn-ghost {
-      background: var(--white);
-      color: var(--text2);
-      border: 1px solid var(--border2);
-    }
-
-    .btn-ghost:hover {
-      background: var(--ice);
-      color: var(--navy);
-    }
-
-    .btn-danger {
-      background: var(--red-lt);
-      color: var(--red);
-      border: 1px solid rgba(224, 82, 82, 0.2);
-    }
-
-    .btn-danger:hover { background: rgba(224, 82, 82, 0.18); }
-
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    /* INPUTS */
-    .inp {
-      background: var(--white);
-      border: 1px solid var(--border2);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-size: 13px;
-      font-family: var(--sans);
-      outline: none;
-      transition: all .2s;
-      padding: 9px 13px;
-    }
-
-    .inp:focus {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
-    }
-
-    .inp::placeholder { color: var(--text3); }
-
-    /* TABLE */
-    .tbl-wrap { overflow-x: auto; }
-
-    table { width: 100%; border-collapse: collapse; }
-
-    thead th {
-      padding: 10px 14px;
-      text-align: left;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .09em;
-      text-transform: uppercase;
-      color: var(--navy);
-      background: #EEF4FB;
-      border-bottom: 2px solid var(--border2);
-    }
-
-    tbody tr {
-      border-bottom: 1px solid var(--border);
-      transition: background .1s;
-    }
-
-    tbody tr:hover { background: #F5F9FF; }
-    tbody tr:last-child { border-bottom: none; }
-
-    td { padding: 12px 14px; font-size: 13px; }
-
-    /* GRIDS */
-    .grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .grid-3   { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .grid-4   { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .grid-2-1 { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
-
-    /* SCORE BAR */
-    .score-bar-wrap { display: flex; align-items: center; gap: 8px; }
-
-    .score-bar {
-      flex: 1;
-      height: 5px;
-      background: var(--border);
-      border-radius: 99px;
-      overflow: hidden;
-      min-width: 50px;
-    }
-
-    .score-bar-fill { height: 100%; border-radius: 99px; }
-
-    /* TOGGLE SWITCH */
-    .tog { position: relative; width: 38px; height: 21px; flex-shrink: 0; }
-    .tog input { opacity: 0; width: 0; height: 0; }
-
-    .tog-track {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background: var(--border2);
-      border-radius: 10px;
-      transition: background .2s;
-    }
-
-    .tog-track::before {
-      content: '';
-      position: absolute;
-      height: 15px;
-      width: 15px;
-      left: 3px;
-      top: 3px;
-      border-radius: 50%;
-      background: #fff;
-      transition: transform .2s;
-    }
-
-    .tog input:checked + .tog-track { background: var(--teal); }
-    .tog input:checked + .tog-track::before { transform: translateX(17px); }
-
-    /* ANIMATIONS */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px) }
-      to   { opacity: 1; transform: translateY(0) }
-    }
-
-    .stat-card { animation: fadeUp .4s ease both; }
-    .stat-card:nth-child(1) { animation-delay: .05s }
-    .stat-card:nth-child(2) { animation-delay: .10s }
-    .stat-card:nth-child(3) { animation-delay: .15s }
-    .stat-card:nth-child(4) { animation-delay: .20s }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(10px) }
-      to   { opacity: 1; transform: translateY(0) }
-    }
-
-    .card { animation: slideUp .35s ease both; }
-
-    /* MODAL */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 31, 53, 0.55);
-      backdrop-filter: blur(4px);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-overlay.show { display: flex; }
-
-    .modal-box {
-      background: var(--white);
-      border: 1px solid var(--border2);
-      border-radius: 20px;
-      padding: 28px;
-      width: 100%;
-      max-width: 480px;
-      animation: fadeUp .3s ease;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-title {
-      font-family: var(--serif);
-      font-size: 18px;
-      color: var(--navy);
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      color: var(--text3);
-      line-height: 1;
-    }
-
-    .modal-close:hover { color: var(--text); }
-
-    /* FORM FIELDS */
-    .field { margin-bottom: 14px; }
-
-    .field label {
-      display: block;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--text2);
-      margin-bottom: 6px;
-    }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 100px 80px;
-      gap: 8px;
-    }
-
-    /* ALERT BANNERS */
+    /* ALERT BANNERS (flash messages — dipakai di layout) */
     .alert {
       border-radius: var(--radius);
       padding: 12px 16px;
@@ -717,12 +356,6 @@ Layout utama Activa Admin Panel
       color: var(--teal);
     }
 
-    .alert-navy {
-      background: var(--navy-xlt);
-      border-color: rgba(30, 58, 95, 0.15);
-      color: var(--navy);
-    }
-
     .alert-warning {
       background: var(--amber-lt);
       border-color: rgba(217, 119, 6, 0.2);
@@ -730,29 +363,33 @@ Layout utama Activa Admin Panel
     }
 
     /* SCROLLBAR */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
 
-    /* ── FIX CANVAS CHART ── */
-    canvas {
-      display: block;
-      width: 100% !important;
-      max-height: 300px;
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 3px;
     }
 
     /* RESPONSIVE */
-    @media(max-width:1200px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .grid-2-1   { grid-template-columns: 1fr; }
-    }
-
     @media(max-width:768px) {
-      .sidebar  { display: none; }
-      .main     { margin-left: 0; }
-      .content  { padding: 16px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .content {
+        padding: 16px;
+      }
     }
   </style>
   @stack('styles')
