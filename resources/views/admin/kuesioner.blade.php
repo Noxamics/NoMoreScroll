@@ -9,137 +9,92 @@ Halaman Data Kuesioner — Activa Admin
 @section('page-title', 'Data Kuesioner')
 
 @section('topbar-actions')
-  <button class="btn btn-ghost btn-sm" onclick="refreshData()">⟳ Refresh</button>
+  <button onclick="refreshTable()" id="btn-refresh" style="
+          display:inline-flex;align-items:center;gap:6px;
+          padding:8px 15px;border-radius:9px;font-size:12px;font-weight:500;
+          background:#fff;color:#4A6180;border:1px solid #C8D8EA;
+          cursor:pointer;font-family:var(--sans);transition:all .15s;
+        " onmouseover="this.style.background='#F0F9FF';this.style.color='#1E3A5F'"
+    onmouseout="this.style.background='#fff';this.style.color='#4A6180'">
+    <span id="refresh-icon" style="font-size:15px;line-height:1;display:inline-flex">↻</span>
+    Refresh Data
+  </button>
 @endsection
 
-@push('styles')
-  <link rel="stylesheet" href="{{ asset('css/kuesioner.css') }}">
+@push('scripts')
+  <script>
+    function refreshTable() {
+      const icon = document.getElementById('refresh-icon');
+      const btn = document.getElementById('btn-refresh');
+      btn.disabled = true;
+      icon.style.transition = 'transform .6s linear';
+      icon.style.transform = 'rotate(360deg)';
+
+      setTimeout(() => {
+        icon.style.transition = 'none';
+        icon.style.transform = 'rotate(0deg)';
+        btn.disabled = false;
+        // reload data tanpa full-page refresh:
+        loadKuesionerData();
+      }, 600);
+    }
+  </script>
 @endpush
 
 @push('styles')
-  <style>
-    .table-wrap {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    .table-container {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    thead th {
-      padding: 12px 16px;
-      text-align: left;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      color: var(--navy);
-      background: #EEF4FB;
-      border-bottom: 2px solid var(--border2);
-    }
-
-    tbody tr {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
-    }
-
-    tbody tr:hover {
-      background: #F5F9FF;
-    }
-
-    tbody tr:last-child {
-      border-bottom: none;
-    }
-
-    td {
-      padding: 12px 16px;
-      font-size: 13px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-
-    .badge-navy {
-      background: rgba(30, 58, 95, 0.1);
-      color: var(--navy);
-    }
-
-    .badge-teal {
-      background: rgba(13, 148, 136, 0.1);
-      color: var(--teal);
-    }
-
-    .badge-amber {
-      background: rgba(217, 119, 6, 0.1);
-      color: var(--amber);
-    }
-
-    .pagination-wrap {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      margin-top: 20px;
-      padding: 0 16px 16px;
-    }
-
-    .pagination-wrap a,
-    .pagination-wrap span {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      font-size: 12px;
-      text-decoration: none;
-      color: var(--text2);
-      transition: all 0.15s;
-    }
-
-    .pagination-wrap a:hover {
-      background: var(--ice);
-      color: var(--navy);
-    }
-
-    .pagination-wrap .active {
-      background: var(--teal);
-      color: white;
-      border-color: var(--teal);
-    }
-
-    .no-data {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text3);
-    }
-  </style>
+  <link rel="stylesheet" href="{{ asset('css/kuesioner.css') }}">
 @endpush
 
 @section('content')
 
   {{-- INFO BANNER --}}
   <div class="alert alert-navy mb-5">
-    <span style="font-size:16px;">≡</span>
+    <div class="alert__icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+    </div>
     <div>
-      <div style="font-weight:600;font-size:13px;margin-bottom:2px;">Data Respons Kuesioner User</div>
-      <div style="font-size:12px;line-height:1.6;">Menampilkan semua respons kuesioner yang telah diisi oleh pengguna.
+      <div class="alert__title">Data Respons Kuesioner User</div>
+      <div class="alert__body">Menampilkan semua respons kuesioner yang telah diisi oleh pengguna.
         Data ini digunakan untuk analisis fokus dan produktivitas.</div>
     </div>
   </div>
 
-  {{-- TABLE --}}
+  {{-- TABLE CARD --}}
   <div class="table-wrap">
+
+    {{-- TABLE HEADER --}}
+    <div class="table-topbar">
+      <div class="table-topbar__left">
+        <div class="table-topbar__icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+        </div>
+        <div>
+          <div class="table-topbar__title">Semua Kuesioner</div>
+          <div class="table-topbar__sub">{{ $kuesioner->total() ?? 0 }} respons ditemukan</div>
+        </div>
+      </div>
+      <div class="table-topbar__right">
+        <span class="pill pill-teal">
+          <svg width="7" height="7" viewBox="0 0 7 7">
+            <circle cx="3.5" cy="3.5" r="3.5" fill="currentColor" />
+          </svg>
+          Aktif
+        </span>
+      </div>
+    </div>
+
     <div class="table-container">
       @if($kuesioner->count() > 0)
         <table>
@@ -147,7 +102,6 @@ Halaman Data Kuesioner — Activa Admin
             <tr>
               <th>#</th>
               <th>User</th>
-              <th>Email</th>
               <th>Tanggal</th>
               <th>Status</th>
               <th>Aksi</th>
@@ -157,22 +111,51 @@ Halaman Data Kuesioner — Activa Admin
             @foreach($kuesioner as $item)
               @php
                 $user = \App\Models\User::find($item->user_id);
+                $initials = strtoupper(substr($user->name ?? 'NA', 0, 2));
+                $avatarColors = ['teal', 'navy', 'violet', 'amber'];
+                $color = $avatarColors[$loop->index % count($avatarColors)];
               @endphp
               <tr>
-                <td>{{ $loop->iteration + ($kuesioner->perPage() * ($kuesioner->currentPage() - 1)) }}</td>
-                <td>
-                  <div style="font-weight:500;color:var(--navy);">{{ $user->name ?? 'N/A' }}</div>
+                <td class="td-num">
+                  {{ $loop->iteration + ($kuesioner->perPage() * ($kuesioner->currentPage() - 1)) }}
                 </td>
                 <td>
-                  <div style="font-size:12px;color:var(--text3);">{{ $user->email ?? 'N/A' }}</div>
+                  <div class="user-cell">
+                    <div class="avatar avatar--{{ $color }}">{{ $initials }}</div>
+                    <div>
+                      <div class="user-cell__name">{{ $user->name ?? 'N/A' }}</div>
+                      <div class="user-cell__email">{{ $user->email ?? 'N/A' }}</div>
+                    </div>
+                  </div>
                 </td>
-                <td>{{ $item->created_at ? $item->created_at->format('d M Y') : '-' }}</td>
                 <td>
-                  <span class="badge badge-teal">Selesai</span>
+                  <div class="td-date">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    {{ $item->created_at ? $item->created_at->format('d M Y') : '-' }}
+                  </div>
                 </td>
                 <td>
-                  <button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:11px;"
-                    onclick="alert('Detail: ' + '{{ $item->_id }}')">
+                  <span class="badge badge-teal">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Selesai
+                  </span>
+                </td>
+                <td>
+                  <button class="btn-detail" onclick="alert('Detail: ' + '{{ $item->_id }}')">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
                     Detail
                   </button>
                 </td>
@@ -185,20 +168,29 @@ Halaman Data Kuesioner — Activa Admin
         <div class="pagination-wrap">
           {{ $kuesioner->links() }}
         </div>
+
       @else
+        {{-- EMPTY STATE --}}
         <div class="no-data">
-          <div style="font-size:40px;margin-bottom:10px;">≡</div>
-          <div style="font-size:13px;font-weight:500;margin-bottom:4px;">Belum ada data kuesioner</div>
-          <div style="font-size:12px;color:var(--text3);">Kuesioner akan muncul di sini setelah user mulai mengisi</div>
+          <div class="no-data__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+          </div>
+          <div class="no-data__title">Belum ada data kuesioner</div>
+          <div class="no-data__sub">Kuesioner akan muncul di sini setelah user mulai mengisi</div>
         </div>
       @endif
     </div>
   </div>
 
   <script>
-    function refreshData() {
-      location.reload();
-    }
+    function refreshData() { location.reload(); }
   </script>
 
 @endsection

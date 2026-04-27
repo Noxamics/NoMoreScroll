@@ -1,224 +1,663 @@
 /* =============================================================
    public/css/rules.css
    Activa Admin — Rule Recommendation page styles
-   NOTE: var(--*) references are intentional CSS custom properties
-         defined in the global stylesheet. VS Code CSS validator
-         false-positives on these — they are valid CSS.
    ============================================================= */
 
 /* ── Stats row ─────────────────────────────────────────────── */
 .rules-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
 }
 
 .rules-stat-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 18px;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    transition:
+        box-shadow 0.2s,
+        transform 0.2s;
+}
+
+.rules-stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.09);
+    transform: translateY(-1px);
 }
 
 .rules-stat-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  font-size: 18px;
-  background: var(--teal-lt);
-  border-radius: 10px;
-  flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: var(--teal-lt);
+    border-radius: 12px;
+    flex-shrink: 0;
+    color: var(--teal);
+}
+
+.rules-stat-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--teal);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.rules-stat-icon--navy {
+    background: rgba(30, 58, 95, 0.08);
+}
+
+.rules-stat-icon--navy svg {
+    stroke: var(--navy);
 }
 
 .rules-stat-label {
-  font-size: 11px;
-  color: var(--text3);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 2px;
 }
 
 .rules-stat-val {
-  font-size: 22px;
-  font-weight: 700;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.1;
 }
 
-.rules-stat-val--navy { color: var(--navy); }
-.rules-stat-val--teal { color: var(--teal); }
+.rules-stat-val--navy {
+    color: var(--navy);
+}
+.rules-stat-val--teal {
+    color: var(--teal);
+}
+
+/* ── Section heading ───────────────────────────────────────── */
+.rules-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.rules-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text3);
+}
+
+.rules-count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    background: var(--ice);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text2);
+}
 
 /* ── Rule card ─────────────────────────────────────────────── */
 .rule-card {
-  position: relative;
-  padding: 20px;
-  margin-bottom: 12px;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  transition: box-shadow .2s;
+    position: relative;
+    padding: 0;
+    margin-bottom: 12px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition:
+        box-shadow 0.2s,
+        transform 0.15s;
+    overflow: hidden;
 }
 
 .rule-card:hover {
-  box-shadow: var(--shadow-md);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
 }
 
 .rule-card.rule-on {
-  border-left: 4px solid var(--teal);
+    border-left: 4px solid var(--teal);
 }
 
 .rule-card.rule-off {
-  opacity: .55;
-  border-left: 4px solid var(--border2);
+    border-left: 4px solid var(--border2);
+}
+
+.rule-card.rule-off .rule-card-inner {
+    opacity: 0.5;
+}
+
+.rule-card-inner {
+    padding: 18px 20px;
 }
 
 /* ── Rule card — head ──────────────────────────────────────── */
 .rule-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
 }
 
 .rule-id {
-  min-width: 28px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--text3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 22px;
+    padding: 0 6px;
+    background: var(--ice);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    flex-shrink: 0;
 }
 
 .rule-name {
-  flex: 1;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--navy);
+    flex: 1;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
 }
 
 /* ── Rule card — body (IF → THEN) ──────────────────────────── */
 .rule-body {
-  display: grid;
-  grid-template-columns: 1fr 32px 1fr;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 14px;
+    display: grid;
+    grid-template-columns: 1fr 36px 1fr;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
 }
 
 .rule-side {
-  padding: 12px 14px;
-  background: var(--ice);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+    padding: 12px 14px;
+    background: var(--ice);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    position: relative;
 }
 
 .rs-lbl {
-  margin-bottom: 5px;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
-.rs-lbl--if   { color: var(--amber); }
-.rs-lbl--then { color: var(--teal);  }
+.rs-lbl svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+}
+
+.rs-lbl--if {
+    color: var(--amber);
+}
+.rs-lbl--if svg {
+    stroke: var(--amber);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.rs-lbl--then {
+    color: var(--teal);
+}
+.rs-lbl--then svg {
+    stroke: var(--teal);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 
 .rs-cond {
-  font-size: 13px;
-  font-family: monospace;
-  font-weight: 700;
-  color: var(--navy);
+    font-size: 13px;
+    font-family: "JetBrains Mono", "Fira Mono", monospace;
+    font-weight: 700;
+    color: var(--navy);
 }
 
 .rs-then {
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--text2);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text2);
 }
 
 .rule-arr {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--navy);
-  text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin: auto;
+}
+
+.rule-arr svg {
+    width: 14px;
+    height: 14px;
+    stroke: var(--navy);
+    fill: none;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* ── Rule card — footer ────────────────────────────────────── */
 .rule-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
 }
 
 .rule-meta {
-  font-size: 11px;
-  color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text3);
+}
+
+.rule-meta svg {
+    width: 13px;
+    height: 13px;
+    stroke: var(--text3);
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+}
+
+.rule-meta strong {
+    color: var(--text2);
+    font-weight: 600;
 }
 
 .rule-actions {
-  display: flex;
-  gap: 6px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* ── Btn icon helpers ──────────────────────────────────────── */
+.btn-icon-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-icon-label svg {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
 }
 
 /* ── Empty state ───────────────────────────────────────────── */
 .rules-empty {
-  padding: 40px;
-  text-align: center;
-  color: var(--text3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 60px 40px;
+    text-align: center;
+    color: var(--text3);
+    background: var(--white);
+    border: 1px dashed var(--border2);
+    border-radius: var(--radius-lg);
+}
+
+.rules-empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--ice);
+    border-radius: 14px;
+}
+
+.rules-empty-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--text3);
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.rules-empty-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text2);
+}
+
+.rules-empty-sub {
+    font-size: 12px;
+}
+
+/* ── Alert overrides ───────────────────────────────────────── */
+.alert-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* ── Modal overrides for rules ─────────────────────────────── */
 .modal-box--md {
-  max-width: 520px;
+    max-width: 520px;
 }
 
 .modal-footer-btns {
-  display: flex;
-  gap: 8px;
-  margin-top: 4px;
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
 }
 
 .modal-footer-btns .btn {
-  flex: 1;
+    flex: 1;
 }
 
 /* ── Form helpers ──────────────────────────────────────────── */
-.inp--center  { text-align: center; }
-.inp--textarea { width: 100%; min-height: 90px; resize: vertical; }
+.inp--center {
+    text-align: center;
+}
+.inp--textarea {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr auto 80px;
+    gap: 8px;
+    align-items: center;
+}
 
 /* ── Utility colour helpers ────────────────────────────────── */
-.text-amber { color: var(--amber); }
-.text-teal  { color: var(--teal);  }
-.mb-4       { margin-bottom: 16px; }
-.mb-5       { margin-bottom: 20px; }
-.mr-2       { margin-right: 6px;   }
-.text-sm    { font-size: 12px;     }
+.text-amber {
+    color: var(--amber);
+}
+.text-teal {
+    color: var(--teal);
+}
+.mb-4 {
+    margin-bottom: 16px;
+}
+.mb-5 {
+    margin-bottom: 20px;
+}
+.mr-2 {
+    margin-right: 6px;
+}
+.text-sm {
+    font-size: 12px;
+}
 
 /* ── Priority pills ────────────────────────────────────────── */
 .pill {
-  display: inline-block;
-  padding: 5px 12px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    flex-shrink: 0;
 }
 
-.pill-navy   { background: rgba(30, 58, 95, 0.1);     color: var(--navy); }
-.pill-red    { background: rgba(224, 82, 82, 0.1);    color: var(--red); }
-.pill-amber  { background: rgba(217, 119, 6, 0.1);    color: var(--amber); }
-.pill-teal   { background: rgba(13, 148, 136, 0.1);   color: var(--teal); }
+.pill svg {
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+}
+
+.pill-navy {
+    background: rgba(30, 58, 95, 0.08);
+    color: var(--navy);
+}
+
+.pill-red {
+    background: rgba(224, 82, 82, 0.1);
+    color: var(--red);
+}
+
+.pill-amber {
+    background: rgba(217, 119, 6, 0.1);
+    color: var(--amber);
+}
+
+.pill-teal {
+    background: rgba(13, 148, 136, 0.1);
+    color: var(--teal);
+}
+
+/* ── Pill dot indicators ───────────────────────────────────── */
+.pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.pill-red .pill-dot {
+    background: var(--red);
+}
+.pill-amber .pill-dot {
+    background: var(--amber);
+}
+.pill-teal .pill-dot {
+    background: var(--teal);
+}
+.pill-navy .pill-dot {
+    background: var(--navy);
+}
+
+/* ── Toggle active state label ─────────────────────────────── */
+.rule-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.rule-status-badge--on {
+    background: rgba(13, 148, 136, 0.1);
+    color: var(--teal);
+}
+
+.rule-status-badge--off {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text3);
+}
+
+.rule-status-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+}
+
+.rule-status-badge--on .rule-status-dot {
+    background: var(--teal);
+}
+.rule-status-badge--off .rule-status-dot {
+    background: var(--text3);
+}
 
 /* ── Danger button override ────────────────────────────────── */
 .btn-danger {
-  background: var(--red);
-  color: white;
-  box-shadow: 0 3px 10px rgba(224, 82, 82, 0.28);
+    background: var(--red);
+    color: white;
+    box-shadow: 0 2px 8px rgba(224, 82, 82, 0.25);
+    border: none;
 }
 
 .btn-danger:hover {
-  background: #c73d3d;
-  transform: translateY(-1px);
+    background: #c73d3d;
+    box-shadow: 0 4px 12px rgba(224, 82, 82, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ── Alert variable badge row ──────────────────────────────── */
+.var-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 6px;
+}
+
+.var-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: rgba(13, 148, 136, 0.08);
+    border: 1px solid rgba(13, 148, 136, 0.2);
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: "JetBrains Mono", "Fira Mono", monospace;
+    font-weight: 600;
+    color: var(--teal);
+}
+
+/* ── MODAL OVERLAY (FIX TOTAL) ───────────────────────── */
+.modal-overlay {
+    position: fixed; /* WAJIB BANGET */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+}
+
+/* Saat aktif */
+.modal-overlay.modal-show {
+    display: flex;
+}
+
+/* Box modal */
+.modal-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+
+    width: 500px;
+    max-width: 90%;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+
+    animation: modalPop 0.2s ease;
+}
+
+/* Animasi */
+@keyframes modalPop {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ── Modal variable hint ───────────────────────────────────── */
+.modal-var-hint {
+    padding: 10px 14px;
+    background: var(--ice);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.modal-var-hint-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text2);
+    margin-bottom: 7px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.modal-var-hint-title svg {
+    width: 13px;
+    height: 13px;
+    stroke: var(--teal);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .rules-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .rule-body {
+        grid-template-columns: 1fr;
+    }
+
+    .rule-arr {
+        transform: rotate(90deg);
+        margin: 0 auto;
+    }
 }
