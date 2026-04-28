@@ -17,6 +17,8 @@ Layout utama Activa Admin Panel
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
+  <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/rules.css') }}">
   @stack('head-scripts')
   <style>
     :root {
@@ -322,22 +324,15 @@ Layout utama Activa Admin Panel
     }
 
     @keyframes blink {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: .3
-      }
+      0%, 100% { opacity: 1 }
+      50% { opacity: .3 }
     }
 
     .content {
       padding: 28px;
     }
 
-    /* ALERT BANNERS (flash messages — dipakai di layout) */
+    /* ALERT BANNERS */
     .alert {
       border-radius: var(--radius);
       padding: 12px 16px;
@@ -363,33 +358,15 @@ Layout utama Activa Admin Panel
     }
 
     /* SCROLLBAR */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--border2);
-      border-radius: 3px;
-    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
     /* RESPONSIVE */
     @media(max-width:768px) {
-      .sidebar {
-        display: none;
-      }
-
-      .main {
-        margin-left: 0;
-      }
-
-      .content {
-        padding: 16px;
-      }
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .content { padding: 16px; }
     }
   </style>
   @stack('styles')

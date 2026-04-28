@@ -769,3 +769,28 @@ td:last-child {
         border-right: none;
     }
 }
+/* ── FIX FILTER BAR ── */
+.filter-bar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow-x: auto;
+}
+
+.filter-bar__search {
+    flex: 1 1 200px !important;
+    min-width: 150px !important;
+    max-width: 300px !important;
+}
+
+.filter-bar select.inp {
+    flex: 0 0 auto !important;
+    width: 130px !important;
+    min-width: 120px !important;
+    max-width: 140px !important;
+}
+
+.filter-bar .btn {
+    flex-shrink: 0 !important;
+}
