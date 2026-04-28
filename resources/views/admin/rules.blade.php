@@ -8,15 +8,6 @@ resources/views/admin/rules.blade.php
 @section('page-title', 'Rule Rekomendasi')
 
 @section('topbar-actions')
-  <button onclick="openCreateModal()" style="
-    display:inline-flex;align-items:center;gap:6px;
-    padding:8px 15px;border-radius:9px;font-size:12px;font-weight:500;
-    background:#1E3A5F;color:#fff;border:1px solid transparent;
-    cursor:pointer;font-family:var(--sans);transition:background .15s;
-  " onmouseover="this.style.background='#264875'" onmouseout="this.style.background='#1E3A5F'">
-    <span style="font-size:17px;line-height:1;font-weight:300">+</span>
-    Tambah Rule
-  </button>
 @endsection
 
 @push('styles')
@@ -75,21 +66,14 @@ resources/views/admin/rules.blade.php
       </div>
     </div>
 
-    <div class="rules-stat-card">
-      <div class="rules-stat-icon rules-stat-icon--navy">
-        <svg viewBox="0 0 24 24">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      </div>
-      <div>
-        <div class="rules-stat-label">Total Diterapkan</div>
-        <div class="rules-stat-val rules-stat-val--navy">{{ number_format($rules->sum('applied_count')) }}</div>
-      </div>
-    </div>
+  </div>
 
+  {{-- TOMBOL TAMBAH RULE BARU --}}
+  <div class="mb-5">
+    <button onclick="openCreateModal()" class="btn-tambah-rule">
+      <span style="font-size:17px;line-height:1;font-weight:300">+</span>
+      Tambah Rule Baru
+    </button>
   </div>
 
   {{-- RULE LIST HEADING --}}
@@ -110,9 +94,9 @@ resources/views/admin/rules.blade.php
   @forelse($rules as $rule)
     @php
       $priMap = [
-        'high' => ['pill-red', 'Tinggi'],
+        'high'   => ['pill-red',   'Tinggi'],
         'medium' => ['pill-amber', 'Sedang'],
-        'low' => ['pill-teal', 'Rendah'],
+        'low'    => ['pill-teal',  'Rendah'],
       ];
       [$priCls, $priLbl] = $priMap[$rule->priority] ?? ['pill-navy', '—'];
     @endphp
@@ -125,19 +109,16 @@ resources/views/admin/rules.blade.php
           <div class="rule-id">R{{ str_pad($loop->index + 1, 2, '0', STR_PAD_LEFT) }}</div>
           <div class="rule-name">{{ $rule->name }}</div>
 
-          {{-- Priority pill --}}
           <span class="pill {{ $priCls }} mr-2">
             <span class="pill-dot"></span>
             {{ $priLbl }}
           </span>
 
-          {{-- Active status badge --}}
           <span class="rule-status-badge {{ $rule->is_active ? 'rule-status-badge--on' : 'rule-status-badge--off' }} mr-2">
             <span class="rule-status-dot"></span>
             {{ $rule->is_active ? 'Aktif' : 'Nonaktif' }}
           </span>
 
-          {{-- Toggle --}}
           <form method="POST" action="{{ route('admin.rules.toggle', $rule->_id) }}">
             @csrf @method('PATCH')
             <label class="tog">
@@ -152,12 +133,22 @@ resources/views/admin/rules.blade.php
 
           <div class="rule-side">
             <div class="rs-lbl rs-lbl--if">
-              <svg viewBox="0 0 24 24">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-              </svg>
-              IF — Kondisi
+              <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+               Kondisi
             </div>
-            <div class="rs-cond">{{ $rule->variable }} {{ $rule->operator }} {{ $rule->value }}</div>
+            <div class="rs-cond">
+              @php
+                $kondisi = [];
+                if (!empty($rule->kategori))         $kondisi[] = 'Kategori: ' . $rule->kategori;
+                if (!empty($rule->social_media_min) || !empty($rule->social_media_max))
+                  $kondisi[] = 'Medsos: ' . ($rule->social_media_min ?? '?') . ' – ' . ($rule->social_media_max ?? '?') . ' mnt';
+                if (!empty($rule->sleep_min) || !empty($rule->sleep_max))
+                  $kondisi[] = 'Tidur: ' . ($rule->sleep_min ?? '?') . ' – ' . ($rule->sleep_max ?? '?') . ' jam';
+                if (!empty($rule->stress_min) || !empty($rule->stress_max))
+                  $kondisi[] = 'Stres: ' . ($rule->stress_min ?? '?') . ' – ' . ($rule->stress_max ?? '?');
+              @endphp
+              {{ implode(' | ', $kondisi) ?: '-' }}
+            </div>
           </div>
 
           <div class="rule-arr">
@@ -172,7 +163,7 @@ resources/views/admin/rules.blade.php
               <svg viewBox="0 0 24 24">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
-              THEN — Rekomendasi
+              Rekomendasi
             </div>
             <div class="rs-then">{{ $rule->recommendation }}</div>
           </div>
@@ -182,20 +173,22 @@ resources/views/admin/rules.blade.php
         {{-- FOOTER --}}
         <div class="rule-foot">
           <div class="rule-meta">
-            <svg viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            Diterapkan ke <strong>{{ number_format($rule->applied_count ?? 0) }}</strong> user
+            Prioritas: <strong>{{ $rule->priority ?? 1 }}</strong>
           </div>
 
           <div class="rule-actions">
-
-            <button class="btn btn-ghost btn-sm" data-id="{{ $rule->_id }}" data-name="{{ $rule->name }}"
-              data-variable="{{ $rule->variable }}" data-operator="{{ $rule->operator }}" data-value="{{ $rule->value }}"
-              data-recommendation="{{ $rule->recommendation }}" data-priority="{{ $rule->priority }}"
+            <button class="btn btn-ghost btn-sm"
+              data-id="{{ $rule->_id }}"
+              data-name="{{ $rule->name }}"
+              data-kategori="{{ $rule->kategori ?? '' }}"
+              data-social-media-min="{{ $rule->social_media_min ?? '' }}"
+              data-social-media-max="{{ $rule->social_media_max ?? '' }}"
+              data-sleep-min="{{ $rule->sleep_min ?? '' }}"
+              data-sleep-max="{{ $rule->sleep_max ?? '' }}"
+              data-stress-min="{{ $rule->stress_min ?? '' }}"
+              data-stress-max="{{ $rule->stress_max ?? '' }}"
+              data-recommendation="{{ $rule->recommendation }}"
+              data-priority="{{ $rule->priority }}"
               onclick="openEdit(this)">
               <span class="btn-icon-label">
                 <svg viewBox="0 0 24 24">
@@ -214,19 +207,17 @@ resources/views/admin/rules.blade.php
                   <svg viewBox="0 0 24 24">
                     <polyline points="3 6 5 6 21 6" />
                     <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
+                    <path d="M10 11v6" /><path d="M14 11v6" />
                     <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
                   </svg>
                   Hapus
                 </span>
               </button>
             </form>
-
           </div>
         </div>
 
-      </div>{{-- /.rule-card-inner --}}
+      </div>
     </div>
 
   @empty
@@ -240,7 +231,7 @@ resources/views/admin/rules.blade.php
         </svg>
       </div>
       <div class="rules-empty-title">Belum ada rule</div>
-      <div class="rules-empty-sub">Klik <strong>+ Tambah Rule</strong> di atas untuk memulai.</div>
+      <div class="rules-empty-sub">Klik <strong>+ Tambah Rule Baru</strong> di atas untuk memulai.</div>
     </div>
   @endforelse
 
@@ -272,70 +263,75 @@ resources/views/admin/rules.blade.php
         </button>
       </div>
 
-      {{-- Variable hint --}}
-      <div class="modal-var-hint mb-4">
-        <div class="modal-var-hint-title">
-          <svg viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          Variabel yang tersedia
-        </div>
-        <div class="var-badge-row">
-          <span class="var-badge">sleep_hours</span>
-          <span class="var-badge">screen_time</span>
-          <span class="var-badge">focus_score</span>
-          <span class="var-badge">digital_dep</span>
-          <span class="var-badge">productivity</span>
-          <span class="var-badge">social_media</span>
-        </div>
-      </div>
-
       <form method="POST" id="rule-form" action="{{ route('admin.rules.store') }}">
         @csrf
         <input type="hidden" name="_method" id="m-method" value="POST">
         <input type="hidden" name="_id" id="m-id" value="">
 
+        {{-- Nama Rule --}}
         <div class="field">
           <label>Nama Rule</label>
           <input class="inp" name="name" id="m-name" required placeholder="contoh: Kurang Tidur Kronis">
         </div>
 
+        {{-- Kategori --}}
         <div class="field">
-          <label>Kondisi IF</label>
-          <div class="field-row">
-            <select class="inp" name="variable" id="m-var">
-              <option value="sleep_hours">sleep_hours</option>
-              <option value="screen_time">screen_time</option>
-              <option value="focus_score">focus_score</option>
-              <option value="digital_dep">digital_dep</option>
-              <option value="productivity">productivity</option>
-              <option value="social_media">social_media</option>
-            </select>
-            <select class="inp" name="operator" id="m-op">
-              <option value="<">&lt; kurang dari</option>
-              <option value=">">&gt; lebih dari</option>
-              <option value="<=">&lt;= maks</option>
-              <option value=">=">&gt;= min</option>
-            </select>
-            <input class="inp inp--center" name="value" id="m-val" type="number" step="any" required placeholder="nilai">
+          <label>Kategori</label>
+          <div class="radio-pill-row">
+            <label class="radio-pill">
+              <input type="radio" name="kategori" value="rendah" id="kat-rendah"> Rendah
+            </label>
+            <label class="radio-pill">
+              <input type="radio" name="kategori" value="sedang" id="kat-sedang"> Sedang
+            </label>
+            <label class="radio-pill">
+              <input type="radio" name="kategori" value="tinggi" id="kat-tinggi"> Tinggi
+            </label>
           </div>
         </div>
 
+        {{-- Social Media Minutes --}}
         <div class="field">
-          <label>Rekomendasi THEN</label>
+          <label>Social Media Minutes</label>
+          <div class="field-row-minmax">
+            <input class="inp" name="social_media_min" id="m-sm-min" type="number" min="0" placeholder="Min">
+            <span class="minmax-sep">–</span>
+            <input class="inp" name="social_media_max" id="m-sm-max" type="number" min="0" placeholder="Max">
+          </div>
+        </div>
+
+        {{-- Sleep Hours --}}
+        <div class="field">
+          <label>Sleep Hours</label>
+          <div class="field-row-minmax">
+            <input class="inp" name="sleep_min" id="m-sleep-min" type="number" min="0" max="24" placeholder="Min">
+            <span class="minmax-sep">–</span>
+            <input class="inp" name="sleep_max" id="m-sleep-max" type="number" min="0" max="24" placeholder="Max">
+          </div>
+        </div>
+
+        {{-- Stress Level --}}
+        <div class="field">
+          <label>Stress Level</label>
+          <div class="field-row-minmax">
+            <input class="inp" name="stress_min" id="m-stress-min" type="number" min="0" placeholder="Min">
+            <span class="minmax-sep">–</span>
+            <input class="inp" name="stress_max" id="m-stress-max" type="number" min="0" placeholder="Max">
+          </div>
+        </div>
+
+        {{-- Rekomendasi --}}
+        <div class="field">
+          <label>Rekomendasi</label>
           <textarea class="inp inp--textarea" name="recommendation" id="m-then" required
             placeholder="Tulis rekomendasi yang akan ditampilkan ke user..."></textarea>
         </div>
 
+        {{-- Prioritas --}}
         <div class="field">
           <label>Prioritas</label>
-          <select class="inp" name="priority" id="m-pri">
-            <option value="high">🔴 Tinggi — Perlu segera ditangani</option>
-            <option value="medium">🟡 Sedang — Perhatikan secara rutin</option>
-            <option value="low">🟢 Rendah — Tips umum kesehatan</option>
-          </select>
+          <input class="inp" name="priority" id="m-pri" type="number" value="1" min="1" placeholder="1"
+            style="max-width:100px;">
         </div>
 
         <div class="modal-footer-btns">

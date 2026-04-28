@@ -9,27 +9,44 @@ use Illuminate\Support\Carbon;
 
 class UserController extends Controller
 {
-    /**
-     * Show users management page
-     */
-    public function index()
+    public function index(Request $request)
     {
+        $query = User::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('daily_role', $request->role);
+        }
+
+        if ($request->filled('gender')) {
+            $query->where('gender', $request->gender);
+        }
+
+        if ($request->sort === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $users = $query->paginate(15)->appends($request->query());
+
         $total = User::count();
-        $users = User::paginate(15);
-        
+
         $stats = [
-            'total' => $total,
-            'active_today' => User::whereDate('last_login_at', Carbon::today())->count(),
+            'total'  => $total,
             'new_7d' => User::where('created_at', '>=', Carbon::now()->subDays(7))->count(),
-            'high_risk' => User::where('focus_score', '<', 4)->count(),
         ];
-        
+
         return view('admin.users', compact('total', 'users', 'stats'));
     }
 
-    /**
-     * Delete a user
-     */
     public function destroy($id)
     {
         $user = User::findOrFail($id);
