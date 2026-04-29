@@ -19,19 +19,22 @@ class RegisterRequest extends FormRequest
             'name'            => 'required|string|max:255',
             'email'           => 'required|email|unique:mongodb.users,email',
             'password'        => 'required|string|min:8|confirmed',
-            'gender'          => 'nullable|in:male,female,other',
-            'age'             => 'nullable|integer|min:10|max:100',
+            'gender'          => 'nullable|in:Male,Female',
+            'date_of_birth'   => 'nullable|date|before:today',
             'region'          => 'nullable|string|max:100',
             'education_level' => 'nullable|string|max:100',
+            'daily_role'      => 'nullable|string|max:100',
+            'income_level'    => 'nullable|string|max:100',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'email.unique'    => 'Email sudah terdaftar',
-            'password.min'    => 'Password minimal 8 karakter',
-            'password.confirmed' => 'Konfirmasi password tidak cocok',
+            'email.unique'        => 'Email sudah terdaftar',
+            'password.min'        => 'Password minimal 8 karakter',
+            'password.confirmed'  => 'Konfirmasi password tidak cocok',
+            'date_of_birth.before'=> 'Tanggal lahir harus sebelum hari ini',
         ];
     }
 

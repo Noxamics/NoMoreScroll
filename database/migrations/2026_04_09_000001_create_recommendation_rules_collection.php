@@ -7,29 +7,36 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Collection: recommendation_rules
  *
- * Fields:
- *   _id, rule_id, condition_field, condition_operator, condition_value,
- *   recommendation_text, category, priority (int: 1=tinggi),
- *   is_active, created_by, created_at, updated_at
+ * Digunakan sebagai fallback kalau tidak pakai AI.
  *
- * Catatan: Langsung MongoDB — tidak perlu tabel MySQL sama sekali.
- *          Isi data via RecommendationRulesSeeder.
+ * Fields:
+ *   _id, name,
+ *   conditions: {                         ← embedded object
+ *     category: "tinggi",
+ *     social_media_minutes: { min: 180 },
+ *     sleep_hours: { max: 6 }
+ *   },
+ *   recommendation: string,
+ *   priority: int (1 = tertinggi),
+ *   is_active: boolean,
+ *   created_at, updated_at
  */
 return new class extends Migration
 {
     public function up(): void
     {
         Schema::connection('mongodb')->create('recommendation_rules', function (Blueprint $collection) {
-            $collection->string('rule_id')->unique();
-            $collection->string('condition_field')->index();
-            $collection->string('condition_operator');
-            $collection->float('condition_value');
-            $collection->string('recommendation_text');
-            $collection->string('category')->nullable();
+            $collection->string('name');
+
+            // Embedded object: conditions
+            // Disimpan langsung di MongoDB sebagai sub-document
+            // { category: string, social_media_minutes: { min: int }, sleep_hours: { max: int }, ... }
+
+            $collection->string('recommendation');
             $collection->integer('priority')->default(1)->index();
             $collection->boolean('is_active')->default(true)->index();
-            $collection->string('created_by')->nullable(); // ObjectId admin sebagai string
-            $collection->timestamps();
+
+            $collection->timestamps(); // created_at & updated_at
         });
     }
 

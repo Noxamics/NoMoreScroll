@@ -9,8 +9,7 @@ use Illuminate\Support\Facades\Schema;
  *
  * Fields:
  *   _id, user_id,
- *   avg_focus_7_days, focus_change_percentage,
- *   avg_productivity_7_days,
+ *   avg_dependence_7_days, dependence_change_percentage,
  *   created_at
  */
 return new class extends Migration
@@ -20,9 +19,8 @@ return new class extends Migration
         Schema::connection('mongodb')->create('analytics_logs', function (Blueprint $collection) {
             $collection->string('user_id')->index();
 
-            $collection->float('avg_focus_7_days')->nullable();
-            $collection->float('focus_change_percentage')->nullable();
-            $collection->float('avg_productivity_7_days')->nullable();
+            $collection->float('avg_dependence_7_days')->nullable();
+            $collection->float('dependence_change_percentage')->nullable();
 
             $collection->timestamp('created_at')->nullable();
         });

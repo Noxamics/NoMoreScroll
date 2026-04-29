@@ -14,7 +14,7 @@ class Questionnaire extends Model
 
     protected $fillable = [
         'user_id',
-        'income_level', 'daily_role',
+        'device_type',
         'device_hours_per_day', 'phone_unlocks_per_day', 'notifications_per_day',
         'social_media_minutes', 'study_minutes', 'physical_activity_days',
         'sleep_hours', 'sleep_quality',

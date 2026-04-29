@@ -39,8 +39,7 @@ class SurveyController extends Controller
         // 1. Simpan data survey ke MongoDB
         $questionnaire = Questionnaire::create([
             'user_id'                  => auth()->id(),
-            'income_level'             => $request->income_level,
-            'daily_role'               => $request->daily_role,
+            'device_type'              => $request->device_type ?? 'Android',
             'device_hours_per_day'     => $request->device_hours_per_day,
             'phone_unlocks_per_day'    => $request->phone_unlocks_per_day,
             'notifications_per_day'    => $request->notifications_per_day,
@@ -84,7 +83,7 @@ class SurveyController extends Controller
     {
         $survey = Questionnaire::where('_id', $id)
             ->where('user_id', auth()->id())
-            ->with(['mlResult.recommendations'])
+            ->with('mlResult')
             ->first();
 
         if (! $survey) {
@@ -102,7 +101,7 @@ class SurveyController extends Controller
 
     /**
      * DELETE /api/surveys/{id}
-     * Hapus survey (dan cascade hapus ml_result + recommendations)
+     * Hapus survey (dan cascade hapus ml_result)
      */
     public function destroy(string $id): JsonResponse
     {
@@ -117,9 +116,8 @@ class SurveyController extends Controller
             ], 404);
         }
 
-        // Hapus relasi ML result dan recommendations
+        // Hapus relasi ML result (embedded, tidak perlu hapus recommendations terpisah)
         if ($survey->mlResult) {
-            $survey->mlResult->recommendations()->delete();
             $survey->mlResult->delete();
         }
 
@@ -138,7 +136,7 @@ class SurveyController extends Controller
     public function latest(): JsonResponse
     {
         $survey = Questionnaire::where('user_id', auth()->id())
-            ->with(['mlResult.recommendations'])
+            ->with('mlResult')
             ->orderBy('created_at', 'desc')
             ->first();
 
