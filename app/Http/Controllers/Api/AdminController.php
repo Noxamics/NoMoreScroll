@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\MlResult;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -119,9 +120,9 @@ class AdminController extends Controller
     {
         $stats = [
             'total_users'    => User::count(),
-            'active_today'   => User::whereDate('last_login_at', now()->today())->count(),
+            'active_today'   => User::whereDate('last_login', now()->today())->count(),
             'new_7days'      => User::where('created_at', '>=', now()->subDays(7))->count(),
-            'high_risk_users' => User::where('focus_score', '<', 4)->count(),
+            'high_risk_users' => MlResult::where('ml_result.category', 'tinggi')->distinct('user_id')->count(),
         ];
 
         return response()->json([
@@ -167,7 +168,7 @@ class AdminController extends Controller
     {
         $format = $request->query('format', 'json');
         
-        $users = User::select('name', 'email', 'focus_score', 'screen_time', 'created_at')->get();
+        $users = User::select('name', 'email', 'gender', 'region', 'education_level', 'created_at')->get();
 
         if ($format === 'csv') {
             // TODO: Generate CSV file

@@ -25,9 +25,11 @@ class AuthController extends Controller
             'email'           => $request->email,
             'password'        => Hash::make($request->password),
             'gender'          => $request->gender,
-            'age'             => $request->age,
+            'date_of_birth'   => $request->date_of_birth,
             'region'          => $request->region,
             'education_level' => $request->education_level,
+            'daily_role'      => $request->daily_role,
+            'income_level'    => $request->income_level,
         ]);
 
         $token = JWTAuth::fromUser($user);
@@ -64,6 +66,10 @@ class AuthController extends Controller
             ], 500);
         }
 
+        // Update last_login
+        $user = auth()->user();
+        $user->update(['last_login' => now()]);
+
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil',
@@ -71,7 +77,7 @@ class AuthController extends Controller
                 'token'      => $token,
                 'token_type' => 'bearer',
                 'expires_in' => config('jwt.ttl') * 60,
-                'user'       => auth()->user(),
+                'user'       => $user,
             ],
         ]);
     }
@@ -142,10 +148,12 @@ class AuthController extends Controller
     {
         $request->validate([
             'name'            => 'sometimes|string|max:255',
-            'gender'          => 'sometimes|in:male,female,other',
-            'age'             => 'sometimes|integer|min:10|max:100',
+            'gender'          => 'sometimes|in:Male,Female',
+            'date_of_birth'   => 'sometimes|date|before:today',
             'region'          => 'sometimes|string|max:100',
             'education_level' => 'sometimes|string|max:100',
+            'daily_role'      => 'sometimes|string|max:100',
+            'income_level'    => 'sometimes|string|max:100',
         ]);
 
         /** @var \App\Models\User $user */
@@ -155,9 +163,11 @@ class AuthController extends Controller
             $request->only([
                 'name',
                 'gender',
-                'age',
+                'date_of_birth',
                 'region',
-                'education_level'
+                'education_level',
+                'daily_role',
+                'income_level',
             ])
         );
 

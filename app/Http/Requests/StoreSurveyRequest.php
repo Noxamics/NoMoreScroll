@@ -16,9 +16,8 @@ class StoreSurveyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Profil tambahan
-            'income_level'             => 'nullable|string',
-            'daily_role'               => 'nullable|string',
+            // Device type — auto-detect dari Flutter
+            'device_type'              => 'nullable|string|max:50',
 
             // Penggunaan perangkat — wajib diisi
             'device_hours_per_day'     => 'required|numeric|min:0|max:24',
@@ -34,9 +33,9 @@ class StoreSurveyRequest extends FormRequest
             'sleep_hours'              => 'required|numeric|min:0|max:24',
             'sleep_quality'            => 'required|numeric|min:1|max:10',
 
-            // Kesehatan mental (skala 1–10 dari kuesioner)
-            'anxiety_score'            => 'required|numeric|min:0|max:10',
-            'depression_score'         => 'required|numeric|min:0|max:10',
+            // Kesehatan mental (skala)
+            'anxiety_score'            => 'required|numeric|min:0|max:27',
+            'depression_score'         => 'required|numeric|min:0|max:27',
             'stress_level'             => 'required|numeric|min:0|max:10',
             'happiness_score'          => 'required|numeric|min:0|max:10',
         ];
