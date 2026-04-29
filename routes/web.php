@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\KuesionerController;
 use App\Http\Controllers\Admin\RuleController;
+use App\Http\Controllers\PredictController;
 
 // ════════════════════════════════════════════════════
 // Admin Authentication Routes (PUBLIC)
@@ -34,4 +35,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::post('/rules', [RuleController::class, 'store'])->name('admin.rules.store');
     Route::patch('/rules/{id}/toggle', [RuleController::class, 'toggle'])->name('admin.rules.toggle');
     Route::delete('/rules/{id}', [RuleController::class, 'destroy'])->name('admin.rules.destroy');
+});
+
+// Predict routes
+Route::middleware(['admin'])->prefix('admin')->group(function () {
+    Route::post('/predict', [PredictController::class, 'index'])->name('admin.predict');
 });

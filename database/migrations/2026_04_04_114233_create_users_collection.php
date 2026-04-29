@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\Schema;
  *   education_level, daily_role, income_level,
  *   created_at, last_login
  */
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::connection('mongodb')->create('users', function (Blueprint $collection) {
