@@ -18,25 +18,25 @@ class PredictController extends Controller
     {
         // 1. Validasi input dari Flutter
         $validated = $request->validate([
-            'date_of_birth'          => 'nullable|date',
-            'gender'                 => 'required|string',
-            'region'                 => 'required|string',
-            'income_level'           => 'required|string',
-            'education_level'        => 'required|string',
-            'daily_role'             => 'required|string',
-            'device_type'            => 'required|string',
-            'device_hours_per_day'   => 'required|numeric',
-            'phone_unlocks_per_day'  => 'required|numeric',
-            'notifications_per_day'  => 'required|numeric',
-            'social_media_minutes'   => 'required|numeric',
-            'study_minutes'          => 'required|numeric',
+            'date_of_birth' => 'nullable|date',
+            'gender' => 'required|string',
+            'region' => 'required|string',
+            'income_level' => 'required|string',
+            'education_level' => 'required|string',
+            'daily_role' => 'required|string',
+            'device_type' => 'required|string',
+            'device_hours_per_day' => 'required|numeric',
+            'phone_unlocks' => 'required|numeric',
+            'notifications_per_day' => 'required|numeric',
+            'social_media_mins' => 'required|numeric',
+            'study_minutes' => 'required|numeric',
             'physical_activity_days' => 'required|numeric',
-            'sleep_hours'            => 'required|numeric',
-            'sleep_quality'          => 'required|numeric',
-            'anxiety_score'          => 'required|numeric',
-            'depression_score'       => 'required|numeric',
-            'stress_level'           => 'required|numeric',
-            'happiness_score'        => 'required|numeric',
+            'sleep_hours' => 'required|numeric',
+            'sleep_quality' => 'required|numeric',
+            'anxiety_score' => 'required|numeric',
+            'depression_score' => 'required|numeric',
+            'stress_level' => 'required|numeric',
+            'happiness_score' => 'required|numeric',
         ]);
 
         // 2. Kirim ke Flask
@@ -53,29 +53,29 @@ class PredictController extends Controller
 
         // 4. Simpan ke MongoDB dengan format embedded baru
         MlResult::create([
-            'user_id'          => auth()->id(),
+            'user_id' => auth()->id(),
             'questionnaire_id' => $request->questionnaire_id,
-            'ml_result'        => [
+            'ml_result' => [
                 'digital_dependence_score' => $hasil['digital_dependence_score'] ?? 0,
-                'category'                 => $hasil['category'] ?? 'rendah',
-                'confidence'               => $hasil['confidence'] ?? 0,
+                'category' => $hasil['category'] ?? 'rendah',
+                'confidence' => $hasil['confidence'] ?? 0,
             ],
-            'ai_analysis'      => $hasil['ai_analysis'] ?? [
-                'penyebab'     => [],
-                'rekomendasi'  => [],
-                'summary'      => '',
-                'model'        => 'unknown',
+            'ai_analysis' => $hasil['ai_analysis'] ?? [
+                'penyebab' => [],
+                'rekomendasi' => [],
+                'summary' => '',
+                'model' => 'unknown',
                 'generated_at' => now()->toISOString(),
             ],
-            'week_group'       => $weekGroup,
+            'week_group' => $weekGroup,
         ]);
 
         // 5. Balas ke Flutter
         return response()->json([
             'digital_dependence_score' => $hasil['digital_dependence_score'] ?? 0,
-            'category'                 => $hasil['category'] ?? 'rendah',
-            'confidence'               => $hasil['confidence'] ?? 0,
-            'message'                  => 'Prediksi berhasil'
+            'category' => $hasil['category'] ?? 'rendah',
+            'confidence' => $hasil['confidence'] ?? 0,
+            'message' => 'Prediksi berhasil'
         ]);
     }
 }

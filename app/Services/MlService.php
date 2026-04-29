@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Log;
 class MlService
 {
     private string $baseUrl;
-    private int    $timeout;
+    private int $timeout;
 
     public function __construct()
     {
@@ -61,25 +61,25 @@ class MlService
                 ->withHeaders(['Accept' => 'application/json'])
                 ->post("{$this->baseUrl}/predict", $payload);
 
-            if (! $response->successful()) {
+            if (!$response->successful()) {
                 Log::error('ML Service error', [
-                    'status'  => $response->status(),
-                    'body'    => $response->body(),
-                    'survey'  => $questionnaire->_id,
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                    'survey' => $questionnaire->_id,
                 ]);
                 return [
                     'success' => false,
-                    'error'   => "Flask mengembalikan HTTP {$response->status()}",
+                    'error' => "Flask mengembalikan HTTP {$response->status()}",
                 ];
             }
 
             $mlData = $response->json();
 
             // Validasi response dari Flask
-            if (! $this->isValidResponse($mlData)) {
+            if (!$this->isValidResponse($mlData)) {
                 return [
                     'success' => false,
-                    'error'   => 'Response Flask tidak sesuai format yang diharapkan',
+                    'error' => 'Response Flask tidak sesuai format yang diharapkan',
                 ];
             }
 
@@ -88,20 +88,20 @@ class MlService
 
             return [
                 'success' => true,
-                'data'    => $mlResult,
+                'data' => $mlResult,
             ];
 
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             Log::error('ML Service unreachable', ['error' => $e->getMessage()]);
             return [
                 'success' => false,
-                'error'   => 'Flask ML service tidak bisa dihubungi',
+                'error' => 'Flask ML service tidak bisa dihubungi',
             ];
         } catch (\Exception $e) {
             Log::error('ML Service unexpected error', ['error' => $e->getMessage()]);
             return [
                 'success' => false,
-                'error'   => 'Terjadi kesalahan tak terduga',
+                'error' => 'Terjadi kesalahan tak terduga',
             ];
         }
     }
@@ -119,31 +119,31 @@ class MlService
 
         return [
             // Identifikasi
-            'questionnaire_id'       => (string) $questionnaire->_id,
+            'questionnaire_id' => (string) $questionnaire->_id,
 
             // Data dari User (register)
-            'gender'                 => $user->gender ?? 'Male',
-            'date_of_birth'          => $user->date_of_birth?->format('Y-m-d'),
-            'age'                    => $user->age ?? 20,
-            'region'                 => $user->region ?? 'Asia',
-            'education_level'        => $user->education_level ?? 'High School',
-            'daily_role'             => $user->daily_role ?? 'Student',
-            'income_level'           => $user->income_level ?? 'Low',
+            'gender' => $user->gender ?? 'Male',
+            'date_of_birth' => $user->date_of_birth?->format('Y-m-d'),
+            'age' => $user->age ?? 20,
+            'region' => $user->region ?? 'Asia',
+            'education_level' => $user->education_level ?? 'High School',
+            'daily_role' => $user->daily_role ?? 'Student',
+            'income_level' => $user->income_level ?? 'Low',
 
             // Data dari Questionnaire
-            'device_type'            => $questionnaire->device_type ?? 'Android',
-            'device_hours_per_day'   => $questionnaire->device_hours_per_day,
-            'phone_unlocks_per_day'  => $questionnaire->phone_unlocks_per_day,
-            'notifications_per_day'  => $questionnaire->notifications_per_day,
-            'social_media_minutes'   => $questionnaire->social_media_minutes,
-            'study_minutes'          => $questionnaire->study_minutes,
+            'device_type' => $questionnaire->device_type ?? 'Android',
+            'device_hours_per_day' => $questionnaire->device_hours_per_day,
+            'phone_unlocks' => $questionnaire->phone_unlocks_per_day,
+            'notifications_per_day' => $questionnaire->notifications_per_day,
+            'social_media_mins' => $questionnaire->social_media_minutes,
+            'study_minutes' => $questionnaire->study_minutes,
             'physical_activity_days' => $questionnaire->physical_activity_days,
-            'sleep_hours'            => $questionnaire->sleep_hours,
-            'sleep_quality'          => $questionnaire->sleep_quality,
-            'anxiety_score'          => $questionnaire->anxiety_score,
-            'depression_score'       => $questionnaire->depression_score,
-            'stress_level'           => $questionnaire->stress_level,
-            'happiness_score'        => $questionnaire->happiness_score,
+            'sleep_hours' => $questionnaire->sleep_hours,
+            'sleep_quality' => $questionnaire->sleep_quality,
+            'anxiety_score' => $questionnaire->anxiety_score,
+            'depression_score' => $questionnaire->depression_score,
+            'stress_level' => $questionnaire->stress_level,
+            'happiness_score' => $questionnaire->happiness_score,
         ];
     }
 
@@ -167,7 +167,7 @@ class MlService
         ];
 
         foreach ($required as $field) {
-            if (! array_key_exists($field, $data)) {
+            if (!array_key_exists($field, $data)) {
                 Log::warning("ML response missing field: {$field}");
                 return false;
             }
@@ -188,20 +188,20 @@ class MlService
         return MlResult::updateOrCreate(
             ['questionnaire_id' => $questionnaire->_id],
             [
-                'user_id'          => $questionnaire->user_id,
-                'ml_result'        => [
+                'user_id' => $questionnaire->user_id,
+                'ml_result' => [
                     'digital_dependence_score' => $mlData['digital_dependence_score'],
-                    'category'                 => $mlData['category'],
-                    'confidence'               => $mlData['confidence'],
+                    'category' => $mlData['category'],
+                    'confidence' => $mlData['confidence'],
                 ],
-                'ai_analysis'      => $mlData['ai_analysis'] ?? [
-                    'penyebab'     => [],
-                    'rekomendasi'  => [],
-                    'summary'      => '',
-                    'model'        => 'unknown',
+                'ai_analysis' => $mlData['ai_analysis'] ?? [
+                    'penyebab' => [],
+                    'rekomendasi' => [],
+                    'summary' => '',
+                    'model' => 'unknown',
                     'generated_at' => now()->toISOString(),
                 ],
-                'week_group'       => $weekGroup,
+                'week_group' => $weekGroup,
             ]
         );
     }
