@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Schema;
  *
  * Fields:
  *   _id, name, email, password_hash,
- *   gender, age, region, education_level,
+ *   gender, tgl_lahir, age, region,
+ *   education_level, daily_role, income_level,
  *   created_at, last_login
  */
 return new class extends Migration
@@ -22,12 +23,15 @@ return new class extends Migration
             $collection->string('password_hash');
 
             $collection->string('gender')->nullable();
-            $collection->integer('age')->nullable();
+            $collection->dateTime('tgl_lahir')->nullable();
+            $collection->integer('age')->nullable(); // Dihasilkan dari tgl_lahir
             $collection->string('region')->nullable();
             $collection->string('education_level')->nullable();
+            $collection->string('daily_role')->nullable();       // e.g. "Student"
+            $collection->string('income_level')->nullable();     // e.g. "High"
 
             $collection->timestamp('last_login')->nullable();
-            $collection->timestamps(); // created_at saja yg dipakai (updated_at boleh ada, tidak wajib)
+            $collection->timestamps(); // created_at & updated_at
         });
     }
 

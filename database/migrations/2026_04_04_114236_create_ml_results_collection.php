@@ -9,10 +9,26 @@ use Illuminate\Support\Facades\Schema;
  *
  * Fields:
  *   _id, user_id, questionnaire_id,
- *   focus_score, productivity_score, digital_dependence_score,
- *   high_risk_flag,
- *   recommendations: [ "...", "..." ],   ← embedded, bukan relasi terpisah
- *   created_at, updated_at
+ *
+ *   ml_result: {                          ← embedded object
+ *     digital_dependence_score: float,
+ *     category: string,                   // "rendah" | "sedang" | "tinggi"
+ *     confidence: float
+ *   },
+ *
+ *   ai_analysis: {                        ← embedded object
+ *     penyebab: [ "tidur_kurang", "screen_time_tinggi" ],
+ *     rekomendasi: [
+ *       { tag: "sleep", isi: "Coba tidur lebih awal..." },
+ *       { tag: "social_media", isi: "Kurangi penggunaan..." }
+ *     ],
+ *     summary: string,
+ *     model: "gemini-pro",
+ *     generated_at: ISODate
+ *   },
+ *
+ *   week_group: "2026-W17",
+ *   created_at
  */
 return new class extends Migration
 {
@@ -22,17 +38,15 @@ return new class extends Migration
             $collection->string('user_id')->index();
             $collection->string('questionnaire_id')->index();
 
-            $collection->float('focus_score');
-            $collection->float('productivity_score');
-            $collection->float('digital_dependence_score');
+            // Embedded object: ml_result
+            // Disimpan langsung di MongoDB sebagai sub-document
+            // { digital_dependence_score: float, category: string, confidence: float }
 
-            $collection->boolean('high_risk_flag')->default(false);
+            // Embedded object: ai_analysis
+            // { penyebab: array, rekomendasi: array, summary: string, model: string, generated_at: datetime }
 
-            // Array of string — embedded recommendations
-            // Contoh: ["Kurangi social media", "Tidur 7 jam"]
-            // Di MongoDB ini otomatis tersimpan sebagai array
-
-            $collection->timestamps(); // created_at + updated_at
+            $collection->string('week_group')->index(); // "2026-W17"
+            $collection->timestamp('created_at')->nullable();
         });
     }
 

@@ -15,7 +15,11 @@ class Kernel extends HttpKernel
      * The application's global HTTP middleware stack.
      */
     protected $middleware = [
+<<<<<<< HEAD
         \Illuminate\Http\Middleware\HandleCors::class,  // ← TAMBAHKAN INI PALING ATAS
+=======
+        \Illuminate\Http\Middleware\HandleCors::class,
+>>>>>>> 948bf3195e10a14806340403236962aafc92ec07
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,

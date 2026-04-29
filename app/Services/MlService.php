@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\MlResult;
 use App\Models\Questionnaire;
-use App\Models\Recommendation;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -12,13 +12,28 @@ use Illuminate\Support\Facades\Log;
  * MlService
  * ──────────────────────────────────────────────────────────
  * Bertanggung jawab mengirim data survey ke Flask REST-API
- * (Member 5 — ML / Data Science) dan menyimpan hasilnya
- * ke MongoDB melalui model Laravel.
+ * (ML / Data Science) dan menyimpan hasilnya ke MongoDB.
  *
  * Flow:
- *  Laravel (Member 1)  →  HTTP POST  →  Flask (Member 5)
- *                      ←  JSON result ←
- *  Laravel simpan ml_results + recommendations ke MongoDB
+ *  Laravel  →  HTTP POST  →  Flask
+ *           ←  JSON result ←
+ *  Laravel simpan ke ml_results (embedded ml_result + ai_analysis)
+ *
+ * Expected Flask response:
+ * {
+ *   "digital_dependence_score": 60,
+ *   "category": "sedang",
+ *   "confidence": 0.82,
+ *   "ai_analysis": {
+ *     "penyebab": ["tidur_kurang", "screen_time_tinggi"],
+ *     "rekomendasi": [
+ *       { "tag": "sleep", "isi": "Coba tidur lebih awal..." },
+ *       { "tag": "social_media", "isi": "Kurangi media sosial..." }
+ *     ],
+ *     "summary": "Ketergantungan dipengaruhi oleh...",
+ *     "model": "gemini-pro"
+ *   }
+ * }
  */
 class MlService
 {
@@ -35,7 +50,7 @@ class MlService
     /**
      * Kirim data questionnaire ke Flask dan simpan hasilnya.
      *
-     * @return array{success: bool, data?: array, error?: string}
+     * @return array{success: bool, data?: MlResult, error?: string}
      */
     public function predict(Questionnaire $questionnaire): array
     {
@@ -73,7 +88,7 @@ class MlService
 
             return [
                 'success' => true,
-                'data'    => $mlResult->load('recommendations'),
+                'data'    => $mlResult,
             ];
 
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
@@ -95,31 +110,36 @@ class MlService
 
     /**
      * Buat payload JSON yang akan dikirim ke Flask.
-     * Sesuaikan field name dengan yang diharapkan model ML.
+     * Termasuk data user (dari register) + data questionnaire.
      */
     private function buildPayload(Questionnaire $questionnaire): array
     {
+        // Ambil data user untuk field yang dipindah ke register
+        $user = User::find($questionnaire->user_id);
+
         return [
             // Identifikasi
             'questionnaire_id'       => (string) $questionnaire->_id,
 
-            // Penggunaan perangkat
+            // Data dari User (register)
+            'gender'                 => $user->gender ?? 'Male',
+            'date_of_birth'          => $user->date_of_birth?->format('Y-m-d'),
+            'age'                    => $user->age ?? 20,
+            'region'                 => $user->region ?? 'Asia',
+            'education_level'        => $user->education_level ?? 'High School',
+            'daily_role'             => $user->daily_role ?? 'Student',
+            'income_level'           => $user->income_level ?? 'Low',
+
+            // Data dari Questionnaire
+            'device_type'            => $questionnaire->device_type ?? 'Android',
             'device_hours_per_day'   => $questionnaire->device_hours_per_day,
             'phone_unlocks_per_day'  => $questionnaire->phone_unlocks_per_day,
             'notifications_per_day'  => $questionnaire->notifications_per_day,
             'social_media_minutes'   => $questionnaire->social_media_minutes,
-
-            // Aktivitas sehari-hari
             'study_minutes'          => $questionnaire->study_minutes,
             'physical_activity_days' => $questionnaire->physical_activity_days,
-            'daily_role'             => $questionnaire->daily_role,
-            'income_level'           => $questionnaire->income_level,
-
-            // Tidur
             'sleep_hours'            => $questionnaire->sleep_hours,
             'sleep_quality'          => $questionnaire->sleep_quality,
-
-            // Kesehatan mental
             'anxiety_score'          => $questionnaire->anxiety_score,
             'depression_score'       => $questionnaire->depression_score,
             'stress_level'           => $questionnaire->stress_level,
@@ -130,23 +150,20 @@ class MlService
     /**
      * Validasi bahwa response Flask mengandung field wajib.
      *
-     * Flask (Member 5) harus return:
+     * Flask harus return:
      * {
-     *   "focus_score": float,
-     *   "productivity_score": float,
      *   "digital_dependence_score": float,
-     *   "high_risk_flag": bool,
-     *   "recommendations": array
+     *   "category": string,
+     *   "confidence": float,
+     *   "ai_analysis": { ... }
      * }
      */
     private function isValidResponse(array $data): bool
     {
         $required = [
-            'focus_score',
-            'productivity_score',
             'digital_dependence_score',
-            'high_risk_flag',
-            'recommendations',
+            'category',
+            'confidence',
         ];
 
         foreach ($required as $field) {
@@ -160,32 +177,32 @@ class MlService
     }
 
     /**
-     * Simpan hasil prediksi ke koleksi ml_results dan recommendations.
+     * Simpan hasil prediksi ke koleksi ml_results sebagai embedded document.
      */
     private function saveMlResult(Questionnaire $questionnaire, array $mlData): MlResult
     {
+        // Hitung week_group: "2026-W17"
+        $weekGroup = now()->format('Y') . '-W' . str_pad(now()->isoWeek(), 2, '0', STR_PAD_LEFT);
+
         // Upsert: kalau sudah ada result untuk questionnaire ini, update
-        $mlResult = MlResult::updateOrCreate(
+        return MlResult::updateOrCreate(
             ['questionnaire_id' => $questionnaire->_id],
             [
-                'user_id'                   => $questionnaire->user_id,
-                'focus_score'               => $mlData['focus_score'],
-                'productivity_score'        => $mlData['productivity_score'],
-                'digital_dependence_score'  => $mlData['digital_dependence_score'],
-                'high_risk_flag'            => $mlData['high_risk_flag'],
+                'user_id'          => $questionnaire->user_id,
+                'ml_result'        => [
+                    'digital_dependence_score' => $mlData['digital_dependence_score'],
+                    'category'                 => $mlData['category'],
+                    'confidence'               => $mlData['confidence'],
+                ],
+                'ai_analysis'      => $mlData['ai_analysis'] ?? [
+                    'penyebab'     => [],
+                    'rekomendasi'  => [],
+                    'summary'      => '',
+                    'model'        => 'unknown',
+                    'generated_at' => now()->toISOString(),
+                ],
+                'week_group'       => $weekGroup,
             ]
         );
-
-        // Simpan recommendations (hapus lama dulu kalau retry)
-        $mlResult->recommendations()->delete();
-
-        if (! empty($mlData['recommendations'])) {
-            Recommendation::create([
-                'result_id'       => $mlResult->_id,
-                'recommendations' => $mlData['recommendations'],
-            ]);
-        }
-
-        return $mlResult;
     }
 }

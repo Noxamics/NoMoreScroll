@@ -19,17 +19,14 @@ class PrediksiController extends Controller
      */
     public function index(): JsonResponse
     {
-        // Ambil semua questionnaire user → join ml_results
-        $results = MlResult::whereHas('questionnaire', function ($q) {
-                $q->where('user_id', auth()->id());
-            })
-            ->with(['questionnaire', 'recommendations'])
+        $results = MlResult::where('user_id', auth()->id())
+            ->with('questionnaire')
             ->orderBy('created_at', 'desc')
             ->get();
 
         return response()->json([
             'success' => true,
-            'data'    => $results,
+            'data'    => $results->map(fn($r) => $this->formatResult($r)),
         ]);
     }
 
@@ -39,10 +36,8 @@ class PrediksiController extends Controller
      */
     public function latest(): JsonResponse
     {
-        $result = MlResult::whereHas('questionnaire', function ($q) {
-                $q->where('user_id', auth()->id());
-            })
-            ->with(['questionnaire', 'recommendations'])
+        $result = MlResult::where('user_id', auth()->id())
+            ->with('questionnaire')
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -67,10 +62,8 @@ class PrediksiController extends Controller
     public function show(string $id): JsonResponse
     {
         $result = MlResult::where('_id', $id)
-            ->whereHas('questionnaire', function ($q) {
-                $q->where('user_id', auth()->id());
-            })
-            ->with(['questionnaire', 'recommendations'])
+            ->where('user_id', auth()->id())
+            ->with('questionnaire')
             ->first();
 
         if (! $result) {
@@ -89,7 +82,6 @@ class PrediksiController extends Controller
     /**
      * POST /api/prediksi/retry/{questionnaire_id}
      * Re-run prediksi ML untuk survey tertentu
-     * (berguna kalau Flask sempat down saat survey disubmit)
      */
     public function retry(string $questionnaireId): JsonResponse
     {
@@ -126,23 +118,23 @@ class PrediksiController extends Controller
      */
     public function summary(): JsonResponse
     {
-        $results = MlResult::whereHas('questionnaire', function ($q) {
-                $q->where('user_id', auth()->id());
-            })
+        $results = MlResult::where('user_id', auth()->id())
             ->orderBy('created_at', 'asc')
-            ->get(['focus_score', 'productivity_score', 'digital_dependence_score', 'high_risk_flag', 'created_at']);
+            ->get();
+
+        $scores = $results->map(fn($r) => $r->ml_result['digital_dependence_score'] ?? 0);
 
         $summary = [
-            'total_surveys'           => $results->count(),
-            'avg_focus_score'         => round($results->avg('focus_score'), 2),
-            'avg_productivity_score'  => round($results->avg('productivity_score'), 2),
-            'avg_digital_dependence'  => round($results->avg('digital_dependence_score'), 2),
-            'high_risk_count'         => $results->where('high_risk_flag', true)->count(),
-            'trend'                   => $results->map(fn($r) => [
-                'date'               => $r->created_at->format('Y-m-d'),
-                'focus'              => $r->focus_score,
-                'productivity'       => $r->productivity_score,
-                'digital_dependence' => $r->digital_dependence_score,
+            'total_surveys'          => $results->count(),
+            'avg_dependence_score'   => round($scores->avg(), 2),
+            'high_risk_count'        => $results->filter(fn($r) =>
+                ($r->ml_result['category'] ?? '') === 'tinggi'
+            )->count(),
+            'trend'                  => $results->map(fn($r) => [
+                'date'               => $r->created_at?->format('Y-m-d'),
+                'dependence_score'   => $r->ml_result['digital_dependence_score'] ?? 0,
+                'category'           => $r->ml_result['category'] ?? 'rendah',
+                'confidence'         => $r->ml_result['confidence'] ?? 0,
             ]),
         ];
 
@@ -158,21 +150,11 @@ class PrediksiController extends Controller
     {
         return [
             'id'                      => $result->_id,
-            'focus_score'             => $result->focus_score,
-            'productivity_score'      => $result->productivity_score,
-            'digital_dependence_score'=> $result->digital_dependence_score,
-            'high_risk_flag'          => $result->high_risk_flag,
-            'risk_level'              => $this->getRiskLabel($result->digital_dependence_score, $result->high_risk_flag),
-            'recommendations'         => $result->recommendations,
+            'ml_result'               => $result->ml_result,
+            'ai_analysis'             => $result->ai_analysis,
+            'week_group'              => $result->week_group,
             'questionnaire'           => $result->questionnaire,
             'created_at'              => $result->created_at,
         ];
-    }
-
-    private function getRiskLabel(float $score, bool $highRisk): string
-    {
-        if ($highRisk || $score >= 75) return 'Tinggi';
-        if ($score >= 50)              return 'Sedang';
-        return 'Rendah';
     }
 }
