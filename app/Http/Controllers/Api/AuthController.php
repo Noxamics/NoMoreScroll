@@ -20,12 +20,18 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request): JsonResponse
     {
+        // Hitung umur (age) secara otomatis dari tgl_lahir/date_of_birth
+        $dob = new \DateTime($request->date_of_birth ?? $request->tgl_lahir);
+        $now = new \DateTime();
+        $age = $now->diff($dob)->y;
+
         $user = User::create([
             'name'            => $request->name,
             'email'           => $request->email,
             'password'        => Hash::make($request->password),
             'gender'          => $request->gender,
-            'date_of_birth'   => $request->date_of_birth,
+            'tgl_lahir'       => $dob->format('Y-m-d H:i:s'), // Simpan ke tgl_lahir
+            'age'             => $age,                        // Simpan ke age
             'region'          => $request->region,
             'education_level' => $request->education_level,
             'daily_role'      => $request->daily_role,
