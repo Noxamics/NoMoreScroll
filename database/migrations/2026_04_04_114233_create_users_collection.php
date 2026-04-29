@@ -24,7 +24,7 @@ return new class extends Migration
 
             $collection->string('gender')->nullable();
             $collection->dateTime('tgl_lahir')->nullable();
-            $collection->integer('age')->nullable();
+            $collection->integer('age')->nullable(); // Dihasilkan dari tgl_lahir
             $collection->string('region')->nullable();
             $collection->string('education_level')->nullable();
             $collection->string('daily_role')->nullable();       // e.g. "Student"
