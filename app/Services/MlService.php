@@ -133,9 +133,9 @@ class MlService
             // Data dari Questionnaire
             'device_type' => $questionnaire->device_type ?? 'Android',
             'device_hours_per_day' => $questionnaire->device_hours_per_day,
-            'phone_unlocks' => $questionnaire->phone_unlocks_per_day,
+            'phone_unlocks'          => $questionnaire->phone_unlocks,
             'notifications_per_day' => $questionnaire->notifications_per_day,
-            'social_media_mins' => $questionnaire->social_media_minutes,
+            'social_media_mins'      => $questionnaire->social_media_mins,
             'study_minutes' => $questionnaire->study_minutes,
             'physical_activity_days' => $questionnaire->physical_activity_days,
             'sleep_hours' => $questionnaire->sleep_hours,

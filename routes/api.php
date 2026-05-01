@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\SurveyController;
 use App\Http\Controllers\Api\PrediksiController;
 use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\PasswordResetController;
-use App\Http\Controllers\PredictController;
+use App\Http\Controllers\PredictController; 
+use App\Http\Controllers\SurveyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -59,7 +59,6 @@ use Illuminate\Support\Facades\Route;
 | └── GET   /api/admin/report/export
 |══════════════════════════════════════════════════════════════
 */
-Route::post('/predict', [PredictController::class, 'predict']);
 // PUBLIC
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
@@ -92,14 +91,6 @@ Route::middleware('jwt.auth')->group(function () {
         Route::get('latest', [SurveyController::class, 'latest']);
         Route::get('{id}', [SurveyController::class, 'show']);
         Route::delete('{id}', [SurveyController::class, 'destroy']);
-    });
-
-    Route::prefix('prediksi')->group(function () {
-        Route::get('/', [PrediksiController::class, 'index']);
-        Route::get('latest', [PrediksiController::class, 'latest']);
-        Route::get('summary', [PrediksiController::class, 'summary']);
-        Route::get('{id}', [PrediksiController::class, 'show']);
-        Route::post('retry/{questionnaireId}', [PrediksiController::class, 'retry']);
     });
 
     Route::prefix('analytics')->group(function () {

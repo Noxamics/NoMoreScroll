@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\KuesionerController;
 use App\Http\Controllers\Admin\RuleController;
-use App\Http\Controllers\PredictController;
+use App\Http\Controllers\SurveyController;
 
 // ════════════════════════════════════════════════════
 // Admin Authentication Routes (PUBLIC)
@@ -39,5 +39,5 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
 // Predict routes
 Route::middleware(['admin'])->prefix('admin')->group(function () {
-    Route::post('/predict', [PredictController::class, 'index'])->name('admin.predict');
+    Route::post('/predict', [SurveyController::class, 'index'])->name('admin.predict');
 });
