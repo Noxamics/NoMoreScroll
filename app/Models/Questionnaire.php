@@ -15,17 +15,17 @@ class Questionnaire extends Model
     protected $fillable = [
         'user_id',
         'device_type',
-        'device_hours_per_day', 'phone_unlocks_per_day', 'notifications_per_day',
-        'social_media_minutes', 'study_minutes', 'physical_activity_days',
+        'device_hours_per_day', 'phone_unlocks', 'notifications_per_day',
+        'social_media_mins', 'study_minutes', 'physical_activity_days',
         'sleep_hours', 'sleep_quality',
         'anxiety_score', 'depression_score', 'stress_level', 'happiness_score',
     ];
 
     protected $casts = [
         'device_hours_per_day'   => 'float',
-        'phone_unlocks_per_day'  => 'integer',
+        'phone_unlocks'  => 'integer',
         'notifications_per_day'  => 'integer',
-        'social_media_minutes'   => 'integer',
+        'social_media_mins'   => 'integer',
         'study_minutes'          => 'integer',
         'physical_activity_days' => 'integer',
         'sleep_hours'            => 'float',
