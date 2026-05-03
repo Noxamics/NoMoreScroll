@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Schema;
  *
  * Fields:
  *   _id, name, email, password_hash,
- *   gender, tgl_lahir, age, region,
+ *   gender, tgl_lahir, age, region,    
  *   education_level, daily_role, income_level,
  *   created_at, last_login
  */
