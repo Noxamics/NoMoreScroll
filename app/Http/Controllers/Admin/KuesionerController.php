@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class KuesionerController extends Controller
 {
-    /**
-     * Data dummy rekomendasi berdasarkan kategori
-     */
     private function getRekomendasi(string $kategori): array
     {
         return match ($kategori) {
@@ -43,76 +42,121 @@ class KuesionerController extends Controller
         };
     }
 
-    /**
-     * Tentukan kategori berdasarkan skor
-     */
-    private function getKategori(int $skor): string
+    private function formatKategori(string $kategori): string
     {
-        if ($skor >= 80) return 'Sangat Tinggi';
-        if ($skor >= 60) return 'Tinggi';
-        if ($skor >= 40) return 'Sedang';
-        return 'Rendah';
+        return match (strtolower($kategori)) {
+            'sangat tinggi' => 'Sangat Tinggi',
+            'tinggi'        => 'Tinggi',
+            'sedang'        => 'Sedang',
+            default         => 'Rendah',
+        };
     }
 
-    /**
-     * Generate data dummy kuesioner
-     */
-    private function generateDummy(): array
+    private function formatPendapatan(?string $income): string
     {
-        $genders     = ['Laki-laki', 'Perempuan'];
-        $regions     = ['Jawa', 'Sumatera', 'Kalimantan', 'Sulawesi', 'Bali', 'Nusa Tenggara'];
-        $pendidikan  = ['SMA/SMK', 'D3', 'S1', 'S2', 'S3'];
-        $roles       = ['Pelajar', 'Mahasiswa', 'Pekerja', 'Wiraswasta', 'Ibu Rumah Tangga'];
-        $pendapatan  = ['< 1 Juta', '1-3 Juta', '3-5 Juta', '5-10 Juta', '> 10 Juta'];
-        $kualitasTidur = ['Sangat Buruk', 'Buruk', 'Cukup', 'Baik', 'Sangat Baik'];
-        $stresLevel  = ['Sangat Rendah', 'Rendah', 'Sedang', 'Tinggi', 'Sangat Tinggi'];
-        $perangkat   = ['Smartphone', 'Laptop', 'Tablet', 'Smartwatch'];
-
-        $data = [];
-
-        for ($i = 1; $i <= 30; $i++) {
-            $skor     = rand(20, 95);
-            $kategori = $this->getKategori($skor);
-
-            $data[] = [
-                'user_id'               => 'USR-' . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'skor_ketergantungan'   => $skor,
-                'kategori'              => $kategori,
-                'gender'                => $genders[array_rand($genders)],
-                'umur'                  => rand(15, 45),
-                'region'                => $regions[array_rand($regions)],
-                'tingkat_pendidikan'    => $pendidikan[array_rand($pendidikan)],
-                'peran_harian'          => $roles[array_rand($roles)],
-                'tingkat_pendapatan'    => $pendapatan[array_rand($pendapatan)],
-                'jam_perangkat_per_hari'=> rand(2, 14),
-                'buka_hp_per_hari'      => rand(10, 120),
-                'notifikasi_per_hari'   => rand(5, 200),
-                'menit_medsos'          => rand(30, 360),
-                'menit_belajar'         => rand(0, 240),
-                'hari_aktif_fisik'      => rand(0, 7),
-                'jam_tidur'             => rand(4, 9),
-                'kualitas_tidur'        => $kualitasTidur[array_rand($kualitasTidur)],
-                'skor_kecemasan'        => rand(0, 21),
-                'skor_depresi'          => rand(0, 27),
-                'tingkat_stres'         => $stresLevel[array_rand($stresLevel)],
-                'skor_kebahagiaan'      => rand(1, 10),
-                'jenis_perangkat'       => $perangkat[array_rand($perangkat)],
-                'rekomendasi'           => $this->getRekomendasi($kategori),
-            ];
-        }
-
-        return $data;
+        return match (strtolower($income ?? '')) {
+            'low'    => '< 3 Juta',
+            'medium' => '3-7 Juta',
+            'high'   => '> 7 Juta',
+            default  => '-',
+        };
     }
 
-    /**
-     * Tampilkan halaman data kuesioner
-     */
+    private function formatRole(?string $role): string
+    {
+        return match (strtolower($role ?? '')) {
+            'student'    => 'Mahasiswa',
+            'worker'     => 'Pekerja',
+            'housewife'  => 'Ibu Rumah Tangga',
+            'freelancer' => 'Wiraswasta',
+            default      => $role ?? '-',
+        };
+    }
+
+    private function formatKualitasTidur(?int $val): string
+    {
+        return match (true) {
+            $val >= 5   => 'Sangat Baik',
+            $val === 4  => 'Baik',
+            $val === 3  => 'Cukup',
+            $val === 2  => 'Buruk',
+            default     => 'Sangat Buruk',
+        };
+    }
+
+    private function formatStres(?int $val): string
+    {
+        return match (true) {
+            $val >= 9  => 'Sangat Tinggi',
+            $val >= 7  => 'Tinggi',
+            $val >= 5  => 'Sedang',
+            $val >= 3  => 'Rendah',
+            default    => 'Sangat Rendah',
+        };
+    }
+
     public function index()
     {
-        $kuesioner = $this->generateDummy();
+        $mlCol   = DB::connection('mongodb')->collection('ml_results');
+        $userCol = DB::connection('mongodb')->collection('users');
+        $qCol    = DB::connection('mongodb')->collection('questionnaires');
 
-        $regions = ['Jawa', 'Sumatera', 'Kalimantan', 'Sulawesi', 'Bali', 'Nusa Tenggara'];
-        $roles   = ['Pelajar', 'Mahasiswa', 'Pekerja', 'Wiraswasta', 'Ibu Rumah Tangga'];
+        // Ambil semua data
+        $mlResults     = $mlCol->get()->keyBy(fn($r) => (string) $r['user_id']);
+        $questionnaires = $qCol->get()->keyBy(fn($q) => (string) $q['user_id']);
+        $users         = $userCol->get();
+
+        $kuesioner = [];
+        $no = 1;
+
+        foreach ($users as $user) {
+            $userId = (string) $user['_id'];
+            $ml     = $mlResults->get($userId);
+            $q      = $questionnaires->get($userId);
+
+            if (!$ml || !$q) continue;
+
+            $mlData   = json_decode($ml['ml_result'] ?? '{}', true);
+            $skor     = (int) round($mlData['digital_dependence_score'] ?? 0);
+            $kategori = $this->formatKategori($mlData['category'] ?? 'rendah');
+
+            $kuesioner[] = [
+                'user_id'               => 'USR-' . str_pad($no, 3, '0', STR_PAD_LEFT),
+                'skor_ketergantungan'   => $skor,
+                'kategori'              => $kategori,
+                'gender'                => $user['gender'] ?? '-',
+                'umur'                  => $user['age'] ?? '-',
+                'region'                => $user['region'] ?? '-',
+                'tingkat_pendidikan'    => $user['education_level'] ?? '-',
+                'peran_harian'          => $this->formatRole($user['daily_role'] ?? null),
+                'tingkat_pendapatan'    => $this->formatPendapatan($user['income_level'] ?? null),
+                'jam_perangkat_per_hari'=> $q['device_hours_per_day'] ?? 0,
+                'buka_hp_per_hari'      => $q['phone_unlocks'] ?? 0,
+                'notifikasi_per_hari'   => $q['notifications_per_day'] ?? 0,
+                'menit_medsos'          => $q['social_media_mins'] ?? 0,
+                'menit_belajar'         => $q['study_minutes'] ?? 0,
+                'hari_aktif_fisik'      => $q['physical_activity_days'] ?? 0,
+                'jam_tidur'             => $q['sleep_hours'] ?? 0,
+                'kualitas_tidur'        => $this->formatKualitasTidur($q['sleep_quality'] ?? null),
+                'skor_kecemasan'        => $q['anxiety_score'] ?? 0,
+                'skor_depresi'          => $q['depression_score'] ?? 0,
+                'tingkat_stres'         => $this->formatStres($q['stress_level'] ?? null),
+                'skor_kebahagiaan'      => $q['happiness_score'] ?? 0,
+                'jenis_perangkat'       => $q['device_type'] ?? '-',
+                'rekomendasi'           => $this->getRekomendasi($kategori),
+            ];
+
+            $no++;
+        }
+
+        // Ambil nilai unik untuk filter
+        $regions = $users->pluck('region')->filter()->unique()->values()->toArray();
+        $roles   = $users->pluck('daily_role')
+                         ->filter()
+                         ->unique()
+                         ->map(fn($r) => $this->formatRole($r))
+                         ->values()
+                         ->toArray();
 
         return view('admin.kuesioner', compact('kuesioner', 'regions', 'roles'));
     }
