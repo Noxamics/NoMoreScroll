@@ -1,7 +1,4 @@
 <?php
-// ══════════════════════════════════════════════════════════════
-// FILE: app/Models/Questionnaire.php
-// ══════════════════════════════════════════════════════════════
 
 namespace App\Models;
 
@@ -23,9 +20,9 @@ class Questionnaire extends Model
 
     protected $casts = [
         'device_hours_per_day'   => 'float',
-        'phone_unlocks'  => 'integer',
+        'phone_unlocks'          => 'integer',
         'notifications_per_day'  => 'integer',
-        'social_media_mins'   => 'integer',
+        'social_media_mins'      => 'integer',
         'study_minutes'          => 'integer',
         'physical_activity_days' => 'integer',
         'sleep_hours'            => 'float',
@@ -35,6 +32,23 @@ class Questionnaire extends Model
         'stress_level'           => 'float',
         'happiness_score'        => 'float',
     ];
+
+    /**
+     * Event Booting untuk Model
+     * Dijalankan otomatis oleh Laravel saat model ini diinisialisasi
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Event listener saat data kuesioner akan dihapus
+        static::deleting(function ($questionnaire) {
+            // Hapus juga data hasil ML yang terkait (Cascade Delete manual untuk MongoDB)
+            if ($questionnaire->mlResult) {
+                $questionnaire->mlResult()->delete();
+            }
+        });
+    }
 
     public function user()
     {

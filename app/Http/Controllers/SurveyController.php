@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Questionnaire;
+use App\Models\MlResult;
 use App\Services\MlService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,15 +13,38 @@ class SurveyController extends Controller
 {
     public function __construct(private MlService $mlService) {}
 
+    public function index(): JsonResponse
+    {
+        $user = auth()->user();
+
+        $surveys = Questionnaire::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $data = $surveys->map(function ($q) {
+            $ml = MlResult::where('questionnaire_id', $q->_id)->first();
+
+            return [
+                'questionnaire' => $this->formatQuestionnaire($q),
+                'ml_result'     => $ml ? $this->formatMlResult($ml) : null,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Histori kuesioner ditemukan',
+            'data'    => $data,
+        ]);
+    }
+
     public function store(Request $request): JsonResponse
     {
-        // ── 1. Validasi ────────────────────────────────────────────────
         $validated = $request->validate([
             'device_type'            => 'nullable|string|max:50',
             'device_hours_per_day'   => 'required|numeric|min:0|max:24',
-            'phone_unlocks'          => 'required|integer|min:0',        // ✅ fix
+            'phone_unlocks'          => 'required|integer|min:0',
             'notifications_per_day'  => 'required|integer|min:0',
-            'social_media_mins'      => 'required|integer|min:0',        // ✅ fix
+            'social_media_mins'      => 'required|integer|min:0',
             'study_minutes'          => 'nullable|integer|min:0',
             'physical_activity_days' => 'nullable|integer|min:0|max:7',
             'sleep_hours'            => 'nullable|numeric|min:0|max:24',
@@ -33,16 +57,15 @@ class SurveyController extends Controller
 
         $user = auth()->user();
 
-        // ── 2. Simpan Questionnaire ────────────────────────────────────
         $questionnaire = Questionnaire::create([
             'user_id'                => $user->id,
             'device_type'            => $validated['device_type']
                                         ?? (str_contains($request->userAgent() ?? '', 'iPhone')
                                             ? 'iPhone' : 'Android'),
             'device_hours_per_day'   => $validated['device_hours_per_day'],
-            'phone_unlocks'          => $validated['phone_unlocks'],          // ✅ bukan 'phone_unlocks_per_day'
+            'phone_unlocks'          => $validated['phone_unlocks'],
             'notifications_per_day'  => $validated['notifications_per_day'],
-            'social_media_mins'      => $validated['social_media_mins'],      // ✅ bukan 'social_media_minutes'
+            'social_media_mins'      => $validated['social_media_mins'],
             'study_minutes'          => $validated['study_minutes'] ?? 0,
             'physical_activity_days' => $validated['physical_activity_days'] ?? 0,
             'sleep_hours'            => $validated['sleep_hours'] ?? 7.0,
@@ -53,20 +76,12 @@ class SurveyController extends Controller
             'happiness_score'        => $validated['happiness_score'] ?? 5,
         ]);
 
-        // ── 3. Kirim ke Flask via MlService ───────────────────────────
-        // MlService harus include data user (gender, region, dll)
         $mlResult = $this->mlService->predict($questionnaire, $user);
 
-        // ── 4. ML gagal → 207 ─────────────────────────────────────────
         if (! $mlResult['success']) {
-            Log::warning('Survey saved but ML failed', [
-                'questionnaire_id' => (string) $questionnaire->_id,
-                'error'            => $mlResult['error'],
-            ]);
-
             return response()->json([
                 'success' => false,
-                'message' => $mlResult['error'] ?? 'Prediksi ML gagal, coba lagi nanti',
+                'message' => $mlResult['error'] ?? 'Prediksi ML gagal',
                 'data'    => [
                     'questionnaire' => $this->formatQuestionnaire($questionnaire),
                     'ml_result'     => null,
@@ -74,10 +89,9 @@ class SurveyController extends Controller
             ], 207);
         }
 
-        // ── 5. Sukses → 201 ───────────────────────────────────────────
         return response()->json([
             'success' => true,
-            'message' => 'Survey berhasil disubmit dan dianalisis',
+            'message' => 'Survey berhasil disubmit',
             'data'    => [
                 'questionnaire' => $this->formatQuestionnaire($questionnaire),
                 'ml_result'     => $this->formatMlResult($mlResult['data']),
@@ -101,10 +115,15 @@ class SurveyController extends Controller
             ], 404);
         }
 
+        $ml = MlResult::where('questionnaire_id', $questionnaire->_id)->first();
+
         return response()->json([
             'success' => true,
             'message' => 'Survey terbaru ditemukan',
-            'data'    => $this->formatQuestionnaire($questionnaire),
+            'data'    => [
+                'questionnaire' => $this->formatQuestionnaire($questionnaire),
+                'ml_result'     => $ml ? $this->formatMlResult($ml) : null,
+            ],
         ]);
     }
 
@@ -115,9 +134,9 @@ class SurveyController extends Controller
             'user_id'                => (string) $q->user_id,
             'device_type'            => $q->device_type,
             'device_hours_per_day'   => $q->device_hours_per_day,
-            'phone_unlocks'          => $q->phone_unlocks,          // ✅ fix
+            'phone_unlocks'          => $q->phone_unlocks,
             'notifications_per_day'  => $q->notifications_per_day,
-            'social_media_mins'      => $q->social_media_mins,      // ✅ fix
+            'social_media_mins'      => $q->social_media_mins,
             'study_minutes'          => $q->study_minutes,
             'physical_activity_days' => $q->physical_activity_days,
             'sleep_hours'            => $q->sleep_hours,
@@ -132,23 +151,23 @@ class SurveyController extends Controller
 
     private function formatMlResult($ml): array
     {
+        // Kita langsung ambil isi dari array ml_result dan ai_analysis
+        // agar strukturnya sejajar (flat)
         return [
-            '_id'              => (string) $ml->_id,
-            'questionnaire_id' => (string) $ml->questionnaire_id,
-            'user_id'          => (string) $ml->user_id,
-            'ml_result'        => [
-                'digital_dependence_score' => $ml->ml_result['digital_dependence_score'] ?? 0,
-                'category'                 => $ml->ml_result['category'] ?? 'rendah',
-                'confidence'               => $ml->ml_result['confidence'] ?? 0,
-            ],
-            'ai_analysis' => [
-                'penyebab'    => $ml->ai_analysis['penyebab'] ?? [],
-                'rekomendasi' => $ml->ai_analysis['rekomendasi'] ?? [],
-                'summary'     => $ml->ai_analysis['summary'] ?? '',
-                'model'       => $ml->ai_analysis['model'] ?? 'unknown',
-            ],
-            'week_group' => $ml->week_group,
-            'created_at' => $ml->created_at?->toISOString(),
+            '_id'                      => (string) $ml->_id,
+            'questionnaire_id'         => (string) $ml->questionnaire_id,
+            'user_id'                  => (string) $ml->user_id,
+            // Ambil data skor
+            'digital_dependence_score' => $ml->ml_result['digital_dependence_score'] ?? 0,
+            'category'                 => $ml->ml_result['category'] ?? 'rendah',
+            'confidence'               => $ml->ml_result['confidence'] ?? 0,
+            // Ambil data analisis
+            'penyebab'                 => $ml->ai_analysis['penyebab'] ?? [],
+            'rekomendasi'              => $ml->ai_analysis['rekomendasi'] ?? [],
+            'summary'                  => $ml->ai_analysis['summary'] ?? '',
+            'model'                    => $ml->ai_analysis['model'] ?? 'unknown',
+            'week_group'               => $ml->week_group,
+            'created_at'               => $ml->created_at?->toISOString(),
         ];
     }
 }
