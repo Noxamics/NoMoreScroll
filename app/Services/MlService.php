@@ -52,7 +52,7 @@ class MlService
      *
      * @return array{success: bool, data?: MlResult, error?: string}
      */
-    public function predict(Questionnaire $questionnaire): array
+    public function predict(Questionnaire $questionnaire, ?User $user = null): array
     {
         $payload = $this->buildPayload($questionnaire);
 
@@ -193,12 +193,12 @@ class MlService
                     'digital_dependence_score' => $mlData['digital_dependence_score'],
                     'category' => $mlData['category'],
                     'confidence' => $mlData['confidence'],
+                    'high_risk_flag' => $mlData['high_risk_flag'] ?? 0,
                 ],
                 'ai_analysis' => $mlData['ai_analysis'] ?? [
                     'penyebab' => [],
+                    'pembukaan' => '',
                     'rekomendasi' => [],
-                    'summary' => '',
-                    'model' => 'unknown',
                     'generated_at' => now()->toISOString(),
                 ],
                 'week_group' => $weekGroup,
